@@ -530,13 +530,6 @@ function App() {
       <footer className="site-footer">
         <div className="footer-top">
           <p>(c) 2026 Moneze. All Rights Reserved</p>
-          <div className="footer-socials" aria-label="Social links">
-            <a href="#home">f</a>
-            <a href="#home">in</a>
-            <a href="#home">x</a>
-            <a href="#home">YT</a>
-            <a href="#home">wa</a>
-          </div>
         </div>
         <div className="footer-line" />
         <div className="footer-details">
