@@ -217,10 +217,7 @@ function App() {
   return (
     <main>
       <nav className="topbar">
-        <a className="brand" href="#home" aria-label="Moneze home" onClick={closeMenu}>
-          <span className="brand-mark">M</span>
-          <span>MONEZE</span>
-        </a>
+        <a className="brand" href="#home" aria-label="Moneze home" onClick={closeMenu}>`r`n          <img className="brand-logo" src="/moneze-logo.png" alt="Moneze" />`r`n        </a>
         <div className="nav-links" aria-label="Primary navigation">
           <a href="#app">App</a>
           <a href="#ai">AI Tools</a>
