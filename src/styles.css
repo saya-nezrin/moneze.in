@@ -1906,3 +1906,14 @@ img {
     max-width: 148px;
   }
 }
+.brand-logo {
+  height: 30px;
+  max-width: 148px;
+}
+
+@media (max-width: 680px) {
+  .brand-logo {
+    height: 26px;
+    max-width: 126px;
+  }
+}
