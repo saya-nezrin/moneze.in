@@ -660,9 +660,9 @@ function App() {
               <Phone size={19} />
               <span><small>Call support</small><strong>+91 99726 54330</strong></span>
             </a>
-            <a href="mailto:service@moneze.in">
+            <a href="mailto:support@moneze.in">
               <Mail size={19} />
-              <span><small>Email us</small><strong>service@moneze.in</strong></span>
+              <span><small>Email us</small><strong>support@moneze.in</strong></span>
             </a>
           </div>
           <div className="contact-note">
@@ -727,7 +727,7 @@ function App() {
         <div className="footer-line" />
         <div className="footer-details">
           <p><strong>Corporate Office:</strong> Moneze Financial Services, India</p>
-          <p><strong>Email ID:</strong> service@moneze.in <span>|</span> <strong>Contact Us at:</strong> +91 99726 54330 <span>|</span> <strong>Whatsapp:</strong> +91 99726 54330</p>
+          <p><strong>Email ID:</strong> support@moneze.in <span>|</span> <strong>Contact Us at:</strong> +91 99726 54330 <span>|</span> <strong>Whatsapp:</strong> +91 99726 54330</p>
         </div>
         <a className="back-top" href="#home" aria-label="Back to top">Top</a>
       </footer>
