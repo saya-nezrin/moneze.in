@@ -12,10 +12,13 @@ import {
   Mail,
   Menu,
   Phone,
+  PieChart,
   Search,
   ShieldCheck,
+  Smartphone,
   Sparkles,
   Target,
+  UsersRound,
   WalletCards
 } from "lucide-react";
 
@@ -257,6 +260,16 @@ function App() {
               Start Investing
               <ArrowRight size={18} />
             </a>
+            <div className="hero-secondary-actions">
+              <a className="hero-secondary-button hero-consultation-button" href="#contact">
+                Get Free Consultation
+                <ArrowRight size={20} />
+              </a>
+              <a className="hero-secondary-button hero-explore-button" href="#app">
+                Explore Moneze App
+                <ArrowRight size={20} />
+              </a>
+            </div>
           </div>
           <div className="proof-row" aria-label="Platform highlights">
             {highlights.map((point) => (
@@ -267,6 +280,61 @@ function App() {
         <div className="hero-phone-card hero-product-card hero-dual-ui" aria-label="Moneze mobile app investment screens">
           <img className="hero-ui-front" src="/moneze-app-home-phone-clean.png" alt="Moneze mobile app portfolio home screen" />
           <img className="hero-ui-back" src="/moneze-app-ai-tools-phone-clean.png" alt="Moneze mobile app AI tools screen" />
+        </div>
+      </section>
+
+      <section className="investment-paths" aria-labelledby="investment-paths-title">
+        <div className="investment-paths-inner">
+          <div className="choice-heading">
+            <span />
+            <h2 id="investment-paths-title">How would you like to invest?</h2>
+            <span />
+          </div>
+          <div className="choice-grid">
+            <article className="choice-card choice-card-advisor">
+              <div className="choice-card-heading">
+                <span className="choice-icon choice-icon-blue"><UsersRound size={32} /></span>
+                <div><h3>Guided by an Advisor</h3><p>For people who want a plan<br />before they invest.</p></div>
+              </div>
+              <ul>
+                {["Financial assessment", "Personalised financial plan", "One-to-one consultation", "Recommendations tailored to you", "Ongoing review & support"].map((item) => <li key={item}><Check size={19} />{item}</li>)}
+              </ul>
+              <a className="choice-cta choice-cta-blue" href="#contact">Book Free Consultation <ArrowRight size={20} /></a>
+            </article>
+            <span className="choice-or">OR</span>
+            <article className="choice-card choice-card-self">
+              <div className="choice-card-heading">
+                <span className="choice-icon choice-icon-green"><Smartphone size={30} /></span>
+                <div><h3>Invest on Your Own</h3><p>For people who want to explore<br />and invest on their own.</p></div>
+              </div>
+              <ul>
+                {["Mutual funds & SIPs", "AI-powered tools", "Fund research & comparison", "Goal planning & calculators", "Seamless investing experience"].map((item) => <li key={item}><Check size={19} />{item}</li>)}
+              </ul>
+              <a className="choice-cta choice-cta-green" href="#app">Explore Moneze App <ArrowRight size={20} /></a>
+            </article>
+          </div>
+
+          <div className="journey-heading">
+            <p>OUR PROCESS</p>
+            <h2>A simple 5-step journey to your financial goals</h2>
+          </div>
+          <div className="journey-grid">
+            {[
+              ["01", FileCheck2, "Understand", "Share your financial details, goals, income and expenses."],
+              ["02", PieChart, "Plan", "We create a personalised financial plan for you."],
+              ["03", UsersRound, "Discuss", "One-to-one consultation with your financial advisor."],
+              ["04", BarChart3, "Invest", "Invest with confidence in the right products for you."],
+              ["05", ShieldCheck, "Review", "We review your portfolio and goals regularly."]
+            ].map(([number, Icon, title, text], index) => (
+              <div className="journey-step" key={number}>
+                <span className="journey-number">{number}</span>
+                <span className="journey-icon"><Icon size={40} /></span>
+                <h3>{title}</h3>
+                <p>{text}</p>
+                {index < 4 && <span className="journey-arrow" aria-hidden="true">· · · →</span>}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -299,23 +367,23 @@ function App() {
       </section>
 
       <section id="app" className="app-showcase">
-        <div className="section-heading centered">
-          <p className="eyebrow">Mobile Experience</p>
-          <h2>A professional app-led website built around real Moneze screens.</h2>
-          <p>Show investors the product before they sign up: home dashboard, screener, AI tools, investment cart, and account utilities.</p>
+        <div className="app-showcase-copy">
+          <p className="eyebrow">All you need in one app</p>
+          <h2>Powerful investing.<br />Simplified.</h2>
+          <p>Mutual funds, SIPs, AI tools, portfolio tracking, goal planning and more—everything you need to grow your wealth, in one place.</p>
+          <div className="app-feature-list" aria-label="Moneze app features">
+            <span><WalletCards size={24} />Mutual Funds</span>
+            <span><LineChart size={24} />SIPs</span>
+            <span><Target size={24} />Goals</span>
+            <span><BrainCircuit size={24} />AI Tools</span>
+            <span><PieChart size={24} />Portfolio</span>
+            <span><Calculator size={24} />Calculators</span>
+          </div>
         </div>
-        <div className="screen-grid">
-          {appScreens.map((screen) => (
-            <article className="screen-card" key={screen.title}>
-              <div className="screen-image">
-                <img src={screen.image} alt={`Moneze ${screen.title} app screen`} />
-              </div>
-              <div className="screen-copy">
-                <h3>{screen.title}</h3>
-                <p>{screen.text}</p>
-              </div>
-            </article>
-          ))}
+        <div className="app-phone-stage" aria-label="Moneze mobile app screens">
+          <img className="app-phone app-phone-left" src="/moneze-app-ai-tools-phone-clean.png" alt="Moneze AI tools screen" />
+          <img className="app-phone app-phone-center" src="/moneze-app-home-phone-clean.png" alt="Moneze portfolio home screen" />
+          <img className="app-phone app-phone-right" src="/moneze-app-menu-phone-clean.png" alt="Moneze account and reports screen" />
         </div>
       </section>
 
@@ -542,10 +610,6 @@ function App() {
 }
 
 export default App;
-
-
-
-
 
 
 
