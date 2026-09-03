@@ -1,10 +1,11 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowRight,
   BadgeCheck,
   BarChart3,
   BrainCircuit,
   Calculator,
+  CalendarDays,
   Check,
   Clock3,
   FileCheck2,
@@ -19,7 +20,8 @@ import {
   Sparkles,
   Target,
   UsersRound,
-  WalletCards
+  WalletCards,
+  X
 } from "lucide-react";
 
 const appScreens = [
@@ -160,12 +162,61 @@ const process = [
 const formatIndianCurrency = (value) => `Rs. ${Math.round(value).toLocaleString("en-IN")}`;
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState(null);
+  const heroPhonesRef = useRef(null);
+  const featureCardsRef = useRef(null);
   const closeMenu = () => setMenuOpen(false);
+  const openPreview = (image, title) => setPreviewImage({ image, title });
+  const openPreviewWithKeyboard = (event, image, title) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openPreview(image, title);
+    }
+  };
   const [calculatorMode, setCalculatorMode] = useState("SIP");
   const [monthlyAmount, setMonthlyAmount] = useState(10000);
   const [duration, setDuration] = useState(5);
   const [returnRate, setReturnRate] = useState(12);
   const [stepUp, setStepUp] = useState(0);
+
+  useEffect(() => {
+    const phones = heroPhonesRef.current;
+    if (!phones) return undefined;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => phones.classList.toggle("is-visible", entry.isIntersecting),
+      { threshold: 0.18 }
+    );
+
+    observer.observe(phones);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const cards = featureCardsRef.current;
+    if (!cards) return undefined;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => cards.classList.toggle("is-visible", entry.isIntersecting),
+      { threshold: 0.14 }
+    );
+
+    observer.observe(cards);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!previewImage) return undefined;
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") setPreviewImage(null);
+    };
+    document.addEventListener("keydown", closeOnEscape);
+    document.body.classList.add("preview-open");
+    return () => {
+      document.removeEventListener("keydown", closeOnEscape);
+      document.body.classList.remove("preview-open");
+    };
+  }, [previewImage]);
   const calculatorData = useMemo(() => {
     const months = duration * 12;
     const monthlyRate = returnRate / 100 / 12;
@@ -270,6 +321,16 @@ function App() {
                 <ArrowRight size={20} />
               </a>
             </div>
+            <a
+              className="hero-secondary-button hero-calendar-button"
+              href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Moneze%20Free%20Consultation&details=Book%20a%20consultation%20with%20the%20Moneze%20team.%20Please%20add%20your%20phone%20number%20and%20questions%20to%20this%20event.&location=Google%20Meet%20or%20phone%20call&add=service%40moneze.in"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Schedule a Moneze consultation in Google Calendar"
+            >
+              Schedule Calendar
+              <CalendarDays size={20} />
+            </a>
           </div>
           <div className="proof-row" aria-label="Platform highlights">
             {highlights.map((point) => (
@@ -277,9 +338,9 @@ function App() {
             ))}
           </div>
         </div>
-        <div className="hero-phone-card hero-product-card hero-dual-ui" aria-label="Moneze mobile app investment screens">
-          <img className="hero-ui-front" src="/moneze-app-home-phone-clean.png" alt="Moneze mobile app portfolio home screen" />
-          <img className="hero-ui-back" src="/moneze-app-ai-tools-phone-clean.png" alt="Moneze mobile app AI tools screen" />
+        <div ref={heroPhonesRef} className="hero-phone-card hero-product-card hero-dual-ui scroll-animate" aria-label="Moneze mobile app investment screens">
+          <img className="hero-ui-front phone-popup-trigger" src="/moneze-app-home-phone-clean.png" alt="Moneze mobile app portfolio home screen" role="button" tabIndex={0} onClick={() => openPreview("/moneze-app-home-phone-clean.png", "Portfolio Home")} onKeyDown={(event) => openPreviewWithKeyboard(event, "/moneze-app-home-phone-clean.png", "Portfolio Home")} />
+          <img className="hero-ui-back phone-popup-trigger" src="/moneze-app-ai-tools-phone-clean.png" alt="Moneze mobile app AI tools screen" role="button" tabIndex={0} onClick={() => openPreview("/moneze-app-ai-tools-phone-clean.png", "AI Tools")} onKeyDown={(event) => openPreviewWithKeyboard(event, "/moneze-app-ai-tools-phone-clean.png", "AI Tools")} />
         </div>
       </section>
 
@@ -362,7 +423,7 @@ function App() {
           </div>
         </div>
         <div className="ai-phone-card">
-          <img src="/moneze-app-ai-tools-phone-clean.png" alt="Moneze AI tools mobile screen" />
+          <img className="phone-popup-trigger" src="/moneze-app-ai-tools-phone-clean.png" alt="Moneze AI tools mobile screen" role="button" tabIndex={0} onClick={() => openPreview("/moneze-app-ai-tools-phone-clean.png", "AI Tools")} onKeyDown={(event) => openPreviewWithKeyboard(event, "/moneze-app-ai-tools-phone-clean.png", "AI Tools")} />
         </div>
       </section>
 
@@ -381,9 +442,9 @@ function App() {
           </div>
         </div>
         <div className="app-phone-stage" aria-label="Moneze mobile app screens">
-          <img className="app-phone app-phone-left" src="/moneze-app-ai-tools-phone-clean.png" alt="Moneze AI tools screen" />
-          <img className="app-phone app-phone-center" src="/moneze-app-home-phone-clean.png" alt="Moneze portfolio home screen" />
-          <img className="app-phone app-phone-right" src="/moneze-app-menu-phone-clean.png" alt="Moneze account and reports screen" />
+          <img className="app-phone app-phone-left phone-popup-trigger" src="/moneze-app-ai-tools-phone-clean.png" alt="Moneze AI tools screen" role="button" tabIndex={0} onClick={() => openPreview("/moneze-app-ai-tools-phone-clean.png", "AI Tools")} onKeyDown={(event) => openPreviewWithKeyboard(event, "/moneze-app-ai-tools-phone-clean.png", "AI Tools")} />
+          <img className="app-phone app-phone-center phone-popup-trigger" src="/moneze-app-home-phone-clean.png" alt="Moneze portfolio home screen" role="button" tabIndex={0} onClick={() => openPreview("/moneze-app-home-phone-clean.png", "Portfolio Home")} onKeyDown={(event) => openPreviewWithKeyboard(event, "/moneze-app-home-phone-clean.png", "Portfolio Home")} />
+          <img className="app-phone app-phone-right phone-popup-trigger" src="/moneze-app-menu-phone-clean.png" alt="Moneze account and reports screen" role="button" tabIndex={0} onClick={() => openPreview("/moneze-app-menu-phone-clean.png", "Account & Reports")} onKeyDown={(event) => openPreviewWithKeyboard(event, "/moneze-app-menu-phone-clean.png", "Account & Reports")} />
         </div>
       </section>
 
@@ -511,7 +572,7 @@ function App() {
           <p className="eyebrow">Platform Capabilities</p>
           <h2>Everything customers need to move from research to action.</h2>
         </div>
-        <div className="feature-grid">
+        <div ref={featureCardsRef} className="feature-grid side-reveal-cards">
           {features.map((feature) => {
             const Icon = feature.icon;
             return (
@@ -594,9 +655,25 @@ function App() {
         </div>
       </section>
 
+      {previewImage && (
+        <div className="phone-preview-modal" role="dialog" aria-modal="true" aria-label={`${previewImage.title} screen preview`} onClick={() => setPreviewImage(null)}>
+          <div className="phone-preview-content" onClick={(event) => event.stopPropagation()}>
+            <button className="phone-preview-close" type="button" aria-label="Close screen preview" onClick={() => setPreviewImage(null)}>
+              <X size={24} />
+            </button>
+            <img src={previewImage.image} alt={`${previewImage.title} enlarged app screen`} />
+            <strong>{previewImage.title}</strong>
+          </div>
+        </div>
+      )}
+
       <footer className="site-footer">
         <div className="footer-top">
           <p>(c) 2026 Moneze. All Rights Reserved</p>
+          <div className="footer-store-badges" aria-label="Download the Moneze app">
+            <span className="store-badge-frame google-play-frame"><img src="/google-play-badge.png" alt="Get it on Google Play" /></span>
+            <span className="store-badge-frame app-store-frame"><img src="/app-store-badge.svg" alt="Download on the App Store" /></span>
+          </div>
         </div>
         <div className="footer-line" />
         <div className="footer-details">
@@ -610,12 +687,3 @@ function App() {
 }
 
 export default App;
-
-
-
-
-
-
-
-
-
