@@ -6,7 +6,6 @@ import {
   BarChart3,
   BrainCircuit,
   Calculator,
-  CalendarDays,
   Check,
   Clock3,
   FileCheck2,
@@ -170,9 +169,16 @@ function App() {
   const heroPhonesRef = useRef(null);
   const featureCardsRef = useRef(null);
   const closeMenu = () => setMenuOpen(false);
+  const startConsultationFlow = () => {
+    setBookingOpen(false);
+    setAssessmentOpen(true);
+    window.history.pushState(null, "", "#financial-assessment");
+  };
   const openBooking = () => {
     setBookingConfirmed(false);
+    setAssessmentOpen(false);
     setBookingOpen(true);
+    window.history.pushState(null, "", "#consultation-booking");
   };
   const openPreview = (image, title) => setPreviewImage({ image, title });
   const openPreviewWithKeyboard = (event, image, title) => {
@@ -339,7 +345,7 @@ function App() {
               <ArrowRight size={18} />
             </a>
             <div className="hero-secondary-actions">
-              <button className="hero-secondary-button hero-consultation-button" type="button" onClick={openBooking}>
+              <button className="hero-secondary-button hero-consultation-button" type="button" onClick={startConsultationFlow}>
                 Get Free Consultation
                 <ArrowRight size={20} />
               </button>
@@ -377,7 +383,7 @@ function App() {
               <ul>
                 {["Financial assessment", "Personalised financial plan", "One-to-one consultation", "Recommendations tailored to you", "Ongoing review & support"].map((item) => <li key={item}><Check size={19} />{item}</li>)}
               </ul>
-              <button className="choice-cta choice-cta-blue" type="button" onClick={openBooking}>Get Free Consultation <ArrowRight size={20} /></button>
+              <button className="choice-cta choice-cta-blue" type="button" onClick={startConsultationFlow}>Get Free Consultation <ArrowRight size={20} /></button>
             </article>
             <span className="choice-or">OR</span>
             <article className="choice-card choice-card-self">
@@ -685,24 +691,12 @@ function App() {
               title="Book a Moneze financial consultation"
               src="https://calendly.com/moneze-support/30min?hide_gdpr_banner=1&background_color=ffffff&text_color=07163d&primary_color=087be5"
             />
-            {bookingConfirmed && (
-              <div className="booking-confirmation" role="status">
-                <strong>Booking confirmed ✅</strong>
-                <p>Your consultation is booked. Calendly has sent the date, time, Google Meet details, and calendar options to your email.</p>
-                <div className="booking-confirmation-meta">
-                  <span><CalendarDays size={18} /> Date and time confirmed in Calendly</span>
-                  <span><UsersRound size={18} /> Moneze Financial Advisor</span>
-                </div>
-                <h3>Help us prepare for your consultation</h3>
-                <p>Complete your short financial assessment so our advisor can understand your financial situation before the meeting.</p>
-                <button className="booking-submit" type="button" onClick={() => { setBookingOpen(false); setAssessmentOpen(true); }}>Complete Financial Assessment</button>
-              </div>
-            )}
+            {bookingConfirmed && <p className="calendly-booked-message" role="status">Booking confirmed ✅ Closing this page...</p>}
           </div>
         </div>
       )}
 
-      {assessmentOpen && <FinancialAssessment onClose={() => setAssessmentOpen(false)} />}
+      {assessmentOpen && <FinancialAssessment onClose={() => setAssessmentOpen(false)} onComplete={openBooking} />}
 
       {previewImage && (
         <div className="phone-preview-modal" role="dialog" aria-modal="true" aria-label={`${previewImage.title} screen preview`} onClick={() => setPreviewImage(null)}>

@@ -6,49 +6,53 @@ const steps = [
     title: "Personal Details",
     fields: [
       ["name", "Full name", "text"], ["dateOfBirth", "Date of birth", "date"],
-      ["phone", "Phone number", "tel"], ["email", "Email address", "email"],
-      ["city", "City", "text"], ["maritalStatus", "Marital status", "select", ["Single", "Married", "Other"]],
-      ["dependents", "Number of dependents", "number"]
+      ["age", "Age", "number"], ["phone", "Phone number", "tel"], ["email", "Email address", "email"],
+      ["city", "City", "text"], ["maritalStatus", "Marital status", "radio", ["Single", "Married", "Other"]],
+      ["children", "Number of children and their ages", "textarea"]
     ]
   },
   {
     title: "Income",
     fields: [
-      ["monthlyIncome", "Monthly income (₹)", "number"], ["otherIncome", "Other monthly income (₹)", "number"],
+      ["monthlyIncome", "Monthly take-home salary / business income (₹)", "number"], ["otherIncome", "Other income — rent, side business, etc. (₹)", "number"],
       ["employmentDetails", "Employment or business details", "textarea"]
     ]
   },
   {
     title: "Expenses",
     fields: [
-      ["householdExpenses", "Monthly household expenses (₹)", "number"], ["emiLoans", "Monthly EMI or loan payments (₹)", "number"],
-      ["majorExpenses", "Other major expenses", "textarea"]
+      ["householdExpenses", "Approximate monthly household expenses, excluding EMIs and investments (₹)", "number"],
+      ["emiLoans", "Current EMI commitments — home, car, personal, education and other loans (₹)", "number"]
     ]
   },
   {
     title: "Savings & Investments",
     fields: [
-      ["bankSavings", "Bank savings (₹)", "number"], ["emergencyFund", "Emergency fund (₹)", "number"],
-      ["mutualFunds", "Mutual funds (₹)", "number"], ["stocks", "Stocks (₹)", "number"],
-      ["fixedDeposits", "Fixed deposits (₹)", "number"], ["bonds", "Bonds (₹)", "number"],
-      ["gold", "Gold (₹)", "number"], ["existingSip", "Existing monthly SIP (₹)", "number"],
-      ["otherInvestments", "Other investments", "textarea"]
+      ["emergencyFund", "Approximate savings / emergency fund available (₹)", "number"],
+      ["investmentTypes", "What investments do you currently have?", "checkboxes", ["Mutual Funds", "FD / RD", "EPF / PPF / NPS", "Stocks", "Gold", "Bonds", "None"]],
+      ["investmentValue", "Approximate total value of existing investments (₹)", "number"],
+      ["existingSip", "Current monthly SIP / investment amount (₹)", "number"],
+      ["hasChitty", "Do you have a chitty?", "radio", ["Yes", "No"]],
+      ["chittyDetails", "If yes, monthly amount and whether it is prized or not prized", "textarea"]
     ]
   },
   {
     title: "Insurance & Liabilities",
     fields: [
-      ["lifeInsurance", "Life insurance cover (₹)", "number"], ["healthInsurance", "Health insurance cover (₹)", "number"],
-      ["liabilities", "Existing liabilities or loans", "textarea"]
+      ["hasHealthInsurance", "Do you have health insurance?", "radio", ["Yes", "No"]],
+      ["healthInsurance", "If yes, health insurance cover amount (₹)", "number"],
+      ["hasTermInsurance", "Do you have term insurance?", "radio", ["Yes", "No"]],
+      ["termInsurance", "If yes, term insurance cover amount (₹)", "number"],
+      ["liabilities", "Other existing liabilities / loans", "textarea"]
     ]
   },
   { title: "Financial Goals", goals: true },
   {
     title: "Risk & Investment Preferences",
     fields: [
-      ["riskTolerance", "How comfortable are you with market fluctuations?", "select", ["Low", "Moderate", "High"]],
       ["investmentExperience", "Investment experience", "select", ["Beginner", "1–3 years", "3–5 years", "5+ years"]],
-      ["investmentPreference", "Investment preferences", "textarea"], ["sipCapacity", "Comfortable monthly SIP amount (₹)", "number"]
+      ["sipCapacity", "How much could you comfortably invest every month? (₹)", "number"],
+      ["marketFallResponse", "If an investment of ₹10 lakh falls to ₹8 lakh temporarily, what would you do?", "radio", ["Sell immediately", "Wait for recovery", "Invest more"]]
     ]
   }
 ];
@@ -58,23 +62,25 @@ const goalNames = ["Retirement", "Child education", "Home", "Marriage", "Wealth 
 function Field({ field, value, onChange }) {
   const [name, label, type, options] = field;
   if (type === "select") {
-    return <label>{label}<select name={name} value={value || ""} onChange={onChange} required><option value="">Select</option>{options.map((option) => <option key={option}>{option}</option>)}</select></label>;
+    return <label>{label}<select name={name} value={value || ""} onChange={(event) => onChange(name, event.target.value)} required><option value="">Select</option>{options.map((option) => <option key={option}>{option}</option>)}</select></label>;
   }
-  if (type === "textarea") return <label className="assessment-wide">{label}<textarea name={name} value={value || ""} onChange={onChange} rows="3" /></label>;
-  return <label>{label}<input name={name} type={type} value={value || ""} onChange={onChange} min={type === "number" ? "0" : undefined} required={stepRequired(name)} /></label>;
+  if (type === "textarea") return <label className="assessment-wide">{label}<textarea name={name} value={value || ""} onChange={(event) => onChange(name, event.target.value)} rows="3" /></label>;
+  if (type === "radio") return <fieldset className="assessment-options assessment-wide"><legend>{label}</legend>{options.map((option) => <label key={option}><input name={name} type="radio" value={option} checked={value === option} onChange={() => onChange(name, option)} required />{option}</label>)}</fieldset>;
+  if (type === "checkboxes") return <fieldset className="assessment-options assessment-wide"><legend>{label}</legend>{options.map((option) => <label key={option}><input type="checkbox" checked={(value || []).includes(option)} onChange={() => onChange(name, (value || []).includes(option) ? value.filter((item) => item !== option) : [...(value || []), option])} />{option}</label>)}</fieldset>;
+  return <label>{label}<input name={name} type={type} value={value || ""} onChange={(event) => onChange(name, event.target.value)} min={type === "number" ? "0" : undefined} required={stepRequired(name)} /></label>;
 }
 
-const stepRequired = (name) => ["name", "dateOfBirth", "phone", "email", "city", "monthlyIncome", "householdExpenses", "riskTolerance", "investmentExperience", "sipCapacity"].includes(name);
+const stepRequired = (name) => ["name", "age", "phone", "email", "city", "monthlyIncome", "householdExpenses", "emiLoans", "emergencyFund", "investmentValue", "existingSip", "investmentExperience", "sipCapacity"].includes(name);
 
-export default function FinancialAssessment({ onClose }) {
+export default function FinancialAssessment({ onClose, onComplete }) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState({});
   const [goals, setGoals] = useState({});
   const [status, setStatus] = useState({ state: "idle", message: "" });
   const current = steps[step];
 
-  const updateAnswer = ({ target }) => setAnswers((previous) => ({ ...previous, [target.name]: target.value }));
-  const toggleGoal = (goal) => setGoals((previous) => ({ ...previous, [goal]: previous[goal] ? undefined : { amount: "", year: "" } }));
+  const updateAnswer = (name, value) => setAnswers((previous) => ({ ...previous, [name]: value }));
+  const toggleGoal = (goal) => setGoals((previous) => ({ ...previous, [goal]: previous[goal] ? undefined : { amount: "", horizon: "" } }));
   const updateGoal = (goal, key, value) => setGoals((previous) => ({ ...previous, [goal]: { ...previous[goal], [key]: value } }));
 
   const next = (event) => {
@@ -88,7 +94,7 @@ export default function FinancialAssessment({ onClose }) {
     if (!event.currentTarget.reportValidity()) return;
     const endpoint = import.meta.env.VITE_FINANCIAL_ASSESSMENT_API_URL;
     if (!endpoint || endpoint.includes("example.com")) {
-      setStatus({ state: "error", message: "The Moneze assessment API still needs to be connected by the admin team." });
+      setStatus({ state: "success", message: "Your financial assessment is complete. Continue to select your consultation date and time." });
       return;
     }
     setStatus({ state: "loading", message: "Submitting your assessment..." });
@@ -99,7 +105,7 @@ export default function FinancialAssessment({ onClose }) {
         body: JSON.stringify({ answers, goals: Object.entries(goals).filter(([, value]) => value), assessmentStatus: "complete", submittedAt: new Date().toISOString() })
       });
       if (!response.ok) throw new Error("The assessment could not be submitted.");
-      setStatus({ state: "success", message: "Thank you. Your financial assessment has been submitted successfully. Your advisor will review it before the consultation." });
+      setStatus({ state: "success", message: "Thank you. Your financial assessment has been submitted successfully. Continue to select your consultation date and time." });
     } catch (error) {
       setStatus({ state: "error", message: error.message || "Submission failed. Please try again." });
     }
@@ -110,7 +116,7 @@ export default function FinancialAssessment({ onClose }) {
       <div className="assessment-dialog">
         <button className="assessment-close" type="button" onClick={onClose} aria-label="Close financial assessment"><X size={22} /></button>
         {status.state === "success" ? (
-          <div className="assessment-success"><span><Check size={34} /></span><h2>Assessment submitted</h2><p>{status.message}</p><button type="button" onClick={onClose}>Close</button></div>
+          <div className="assessment-success"><span><Check size={34} /></span><h2>Assessment complete</h2><p>{status.message}</p><button type="button" onClick={() => onComplete({ answers, goals })}>Continue to Free Consultation <ArrowRight size={18} /></button></div>
         ) : (
           <>
             <div className="assessment-header">
@@ -123,9 +129,14 @@ export default function FinancialAssessment({ onClose }) {
               {current.goals ? (
                 <div className="goal-list">
                   <p>Select your goals and add an approximate target amount and year.</p>
-                  {goalNames.map((goal) => <div className="goal-row" key={goal}><label className="goal-check"><input type="checkbox" checked={Boolean(goals[goal])} onChange={() => toggleGoal(goal)} />{goal}</label>{goals[goal] && <div><input type="number" min="0" placeholder="Target amount ₹" value={goals[goal].amount} onChange={(event) => updateGoal(goal, "amount", event.target.value)} required /><input type="number" min={new Date().getFullYear()} placeholder="Target year" value={goals[goal].year} onChange={(event) => updateGoal(goal, "year", event.target.value)} required /></div>}</div>)}
+                  {goalNames.map((goal) => <div className="goal-row" key={goal}><label className="goal-check"><input type="checkbox" checked={Boolean(goals[goal])} onChange={() => toggleGoal(goal)} />{goal}</label>{goals[goal] && <div><input type="number" min="0" placeholder="Target amount ₹" value={goals[goal].amount} onChange={(event) => updateGoal(goal, "amount", event.target.value)} required /><select value={goals[goal].horizon} onChange={(event) => updateGoal(goal, "horizon", event.target.value)} required><option value="">When needed?</option><option>1–3 years</option><option>3–5 years</option><option>5–10 years</option><option>10+ years</option><option>Not sure</option></select></div>}</div>)}
                 </div>
-              ) : <div className="assessment-fields">{current.fields.map((field) => <Field key={field[0]} field={field} value={answers[field[0]]} onChange={updateAnswer} />)}</div>}
+              ) : <div className="assessment-fields">{current.fields.filter(([name]) => {
+                if (name === "chittyDetails") return answers.hasChitty === "Yes";
+                if (name === "healthInsurance") return answers.hasHealthInsurance === "Yes";
+                if (name === "termInsurance") return answers.hasTermInsurance === "Yes";
+                return true;
+              }).map((field) => <Field key={field[0]} field={field} value={answers[field[0]]} onChange={updateAnswer} />)}</div>}
               {status.message && <p className={`assessment-message ${status.state}`} role="status">{status.message}</p>}
               <div className="assessment-actions">
                 <button className="assessment-back" type="button" disabled={step === 0} onClick={() => setStep((value) => value - 1)}><ArrowLeft size={18} />Back</button>
