@@ -890,14 +890,43 @@ span {
   grid-template-columns: minmax(0, 0.96fr) minmax(430px, 0.82fr);
   min-height: 960px;
   overflow: hidden;
-  padding: 150px clamp(20px, 5vw, 76px) 0;
+  padding: 104px clamp(20px, 5vw, 76px) 0;
   position: relative;
+}
+
+.hero > :not(.hero-wave) {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-wave {
+  bottom: -1px;
+  height: clamp(105px, 11vw, 170px);
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  width: 100%;
+  z-index: 1;
+}
+
+.hero-wave svg {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.hero-wave-back {
+  fill: rgba(214, 237, 255, 0.88);
+}
+
+.hero-wave-front {
+  fill: #ffffff;
 }
 
 .hero-copy-wrap {
   align-self: start;
   padding-bottom: clamp(56px, 7vw, 96px);
-  padding-top: clamp(56px, 8vw, 126px);
+  padding-top: 18px;
 }
 
 .eyebrow {
@@ -2105,13 +2134,13 @@ span {
   .hero {
     grid-template-columns: 1fr;
     min-height: auto;
-    padding-top: 132px;
+    padding-top: 92px;
     text-align: center;
   }
 
   .hero-copy-wrap {
     padding-bottom: 64px;
-    padding-top: 40px;
+    padding-top: 14px;
   }
 
   .hero-copy,
@@ -2253,7 +2282,7 @@ span {
   }
 
   .hero {
-    padding-top: 96px;
+    padding-top: 82px;
   }
 
   .hero .eyebrow {

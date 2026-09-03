@@ -365,6 +365,12 @@ function App() {
           <img className="hero-ui-front phone-popup-trigger" src="/moneze-app-home-phone-clean.png" alt="Moneze mobile app portfolio home screen" role="button" tabIndex={0} onClick={() => openPreview("/moneze-app-home-phone-clean.png", "Portfolio Home")} onKeyDown={(event) => openPreviewWithKeyboard(event, "/moneze-app-home-phone-clean.png", "Portfolio Home")} />
           <img className="hero-ui-back phone-popup-trigger" src="/moneze-app-ai-tools-phone-clean.png" alt="Moneze mobile app AI tools screen" role="button" tabIndex={0} onClick={() => openPreview("/moneze-app-ai-tools-phone-clean.png", "AI Tools")} onKeyDown={(event) => openPreviewWithKeyboard(event, "/moneze-app-ai-tools-phone-clean.png", "AI Tools")} />
         </div>
+        <div className="hero-wave" aria-hidden="true">
+          <svg viewBox="0 0 1440 170" preserveAspectRatio="none">
+            <path className="hero-wave-back" d="M0 58C238 5 380 116 654 82C910 50 1091 6 1440 53V170H0Z" />
+            <path className="hero-wave-front" d="M0 91C250 47 411 139 674 108C941 76 1128 37 1440 74V170H0Z" />
+          </svg>
+        </div>
       </section>
 
       <section className="investment-paths" aria-labelledby="investment-paths-title">
