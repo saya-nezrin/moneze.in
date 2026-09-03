@@ -1032,16 +1032,6 @@ span {
   color: #ffffff;
 }
 
-.hero-meet-button {
-  align-self: center;
-  background: #ffffff;
-  border: 1px solid #ffffff;
-  box-shadow: 0 18px 38px rgba(3, 19, 72, 0.16);
-  color: #087be5;
-  flex: none;
-  width: min(100%, 280px);
-}
-
 .hero-secondary-button:hover {
   transform: translateY(-2px);
 }
@@ -1056,14 +1046,8 @@ span {
   box-shadow: 0 20px 40px rgba(0, 57, 145, 0.42);
 }
 
-.hero-meet-button:hover {
-  background: #ffffff;
-  box-shadow: 0 22px 42px rgba(3, 19, 72, 0.24);
-}
-
 .hero-actions > .primary-button,
-.hero-secondary-actions .hero-secondary-button,
-.hero-actions > .hero-meet-button {
+.hero-secondary-actions .hero-secondary-button {
   animation: heroButtonReveal 650ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
@@ -1073,10 +1057,6 @@ span {
 
 .hero-secondary-actions .hero-explore-button {
   animation-delay: 210ms;
-}
-
-.hero-actions > .hero-meet-button {
-  animation-delay: 310ms;
 }
 
 .hero-actions > .primary-button {
@@ -1117,8 +1097,7 @@ span {
 
 @media (prefers-reduced-motion: reduce) {
   .hero-actions > .primary-button,
-  .hero-secondary-actions .hero-secondary-button,
-  .hero-actions > .hero-meet-button {
+  .hero-secondary-actions .hero-secondary-button {
     animation: none;
   }
 

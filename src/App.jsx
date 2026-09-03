@@ -20,7 +20,6 @@ import {
   Sparkles,
   Target,
   UsersRound,
-  Video,
   WalletCards,
   X
 } from "lucide-react";
@@ -355,10 +354,6 @@ function App() {
                 <ArrowRight size={20} />
               </a>
             </div>
-            <button className="hero-secondary-button hero-meet-button" type="button" onClick={openBooking}>
-              Schedule a Google Meet
-              <Video size={20} />
-            </button>
           </div>
           <div className="proof-row" aria-label="Platform highlights">
             {highlights.map((point) => (
