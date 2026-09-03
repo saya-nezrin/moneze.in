@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import FinancialAssessment from "./FinancialAssessment";
+import WelcomeQuestionnaire from "./WelcomeQuestionnaire";
 import {
   ArrowRight,
   BadgeCheck,
@@ -161,6 +162,7 @@ const process = [
 
 const formatIndianCurrency = (value) => `Rs. ${Math.round(value).toLocaleString("en-IN")}`;
 function App() {
+  const [welcomeOpen, setWelcomeOpen] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
   const [bookingOpen, setBookingOpen] = useState(false);
@@ -169,16 +171,26 @@ function App() {
   const heroPhonesRef = useRef(null);
   const featureCardsRef = useRef(null);
   const closeMenu = () => setMenuOpen(false);
-  const startConsultationFlow = () => {
-    setBookingOpen(false);
-    setAssessmentOpen(true);
-    window.history.pushState(null, "", "#financial-assessment");
-  };
   const openBooking = () => {
     setBookingConfirmed(false);
     setAssessmentOpen(false);
     setBookingOpen(true);
     window.history.pushState(null, "", "#consultation-booking");
+  };
+  const startConsultationFlow = () => {
+    setBookingOpen(false);
+    setAssessmentOpen(false);
+    setWelcomeOpen(true);
+    window.history.pushState(null, "", "#consultation");
+  };
+  const completeAssessment = () => {
+    setAssessmentOpen(false);
+    window.history.pushState(null, "", "#home");
+  };
+  const openAssessmentAfterBooking = () => {
+    setBookingOpen(false);
+    setAssessmentOpen(true);
+    window.history.pushState(null, "", "#financial-assessment");
   };
   const openPreview = (image, title) => setPreviewImage({ image, title });
   const openPreviewWithKeyboard = (event, image, title) => {
@@ -220,10 +232,11 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (!previewImage && !bookingOpen && !assessmentOpen) return undefined;
+    if (!welcomeOpen && !previewImage && !bookingOpen && !assessmentOpen) return undefined;
     const closeOnEscape = (event) => {
       if (event.key === "Escape") {
         setPreviewImage(null);
+        setWelcomeOpen(false);
         setBookingOpen(false);
         setAssessmentOpen(false);
       }
@@ -234,13 +247,24 @@ function App() {
       document.removeEventListener("keydown", closeOnEscape);
       document.body.classList.remove("preview-open");
     };
-  }, [previewImage, bookingOpen, assessmentOpen]);
+  }, [welcomeOpen, previewImage, bookingOpen, assessmentOpen]);
 
   useEffect(() => {
     const receiveCalendlyEvent = (event) => {
-      if (event.origin === "https://calendly.com" && event.data?.event === "calendly.event_scheduled") {
+      let messageData = event.data;
+      if (typeof messageData === "string") {
+        try { messageData = JSON.parse(messageData); } catch { return; }
+      }
+      let calendlyMessage = false;
+      try {
+        const hostname = new URL(event.origin).hostname;
+        calendlyMessage = hostname === "calendly.com" || hostname.endsWith(".calendly.com");
+      } catch {
+        calendlyMessage = false;
+      }
+      if (calendlyMessage && messageData?.event === "calendly.event_scheduled") {
         setBookingConfirmed(true);
-        window.setTimeout(() => setBookingOpen(false), 1800);
+        window.setTimeout(openAssessmentAfterBooking, 1000);
       }
     };
     window.addEventListener("message", receiveCalendlyEvent);
@@ -684,6 +708,16 @@ function App() {
         </div>
       </section>
 
+      {welcomeOpen && (
+        <WelcomeQuestionnaire
+          onClose={() => setWelcomeOpen(false)}
+          onConsultation={() => {
+            setWelcomeOpen(false);
+            openBooking();
+          }}
+        />
+      )}
+
       {bookingOpen && (
         <div className="booking-modal" role="dialog" aria-modal="true" aria-labelledby="booking-title" onClick={() => setBookingOpen(false)}>
           <div className="booking-dialog calendly-dialog" onClick={(event) => event.stopPropagation()}>
@@ -697,12 +731,22 @@ function App() {
               title="Book a Moneze financial consultation"
               src="https://calendly.com/moneze-support/30min?hide_gdpr_banner=1&background_color=ffffff&text_color=07163d&primary_color=087be5"
             />
-            {bookingConfirmed && <p className="calendly-booked-message" role="status">Booking confirmed ✅ Closing this page...</p>}
+            {bookingConfirmed && (
+              <div className="calendly-booked-message" role="status">
+                <span>Booking confirmed ✅ Your financial assessment is next.</span>
+                <button type="button" onClick={openAssessmentAfterBooking}>Continue to Financial Assessment <ArrowRight size={18} /></button>
+              </div>
+            )}
+            {!bookingConfirmed && (
+              <button className="calendly-assessment-fallback" type="button" onClick={openAssessmentAfterBooking}>
+                Booking completed? Continue to Financial Assessment <ArrowRight size={18} />
+              </button>
+            )}
           </div>
         </div>
       )}
 
-      {assessmentOpen && <FinancialAssessment onClose={() => setAssessmentOpen(false)} onComplete={openBooking} />}
+      {assessmentOpen && <FinancialAssessment onClose={() => setAssessmentOpen(false)} onComplete={completeAssessment} />}
 
       {previewImage && (
         <div className="phone-preview-modal" role="dialog" aria-modal="true" aria-label={`${previewImage.title} screen preview`} onClick={() => setPreviewImage(null)}>

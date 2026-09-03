@@ -94,7 +94,7 @@ export default function FinancialAssessment({ onClose, onComplete }) {
     if (!event.currentTarget.reportValidity()) return;
     const endpoint = import.meta.env.VITE_FINANCIAL_ASSESSMENT_API_URL;
     if (!endpoint || endpoint.includes("example.com")) {
-      setStatus({ state: "success", message: "Your financial assessment is complete. Continue to select your consultation date and time." });
+      setStatus({ state: "success", message: "Thank you. Your assessment is complete and will help the advisor prepare for your scheduled consultation." });
       return;
     }
     setStatus({ state: "loading", message: "Submitting your assessment..." });
@@ -105,7 +105,7 @@ export default function FinancialAssessment({ onClose, onComplete }) {
         body: JSON.stringify({ answers, goals: Object.entries(goals).filter(([, value]) => value), assessmentStatus: "complete", submittedAt: new Date().toISOString() })
       });
       if (!response.ok) throw new Error("The assessment could not be submitted.");
-      setStatus({ state: "success", message: "Thank you. Your financial assessment has been submitted successfully. Continue to select your consultation date and time." });
+      setStatus({ state: "success", message: "Thank you. Your financial assessment has been submitted successfully. Your advisor will review it before the scheduled consultation." });
     } catch (error) {
       setStatus({ state: "error", message: error.message || "Submission failed. Please try again." });
     }
@@ -116,7 +116,7 @@ export default function FinancialAssessment({ onClose, onComplete }) {
       <div className="assessment-dialog">
         <button className="assessment-close" type="button" onClick={onClose} aria-label="Close financial assessment"><X size={22} /></button>
         {status.state === "success" ? (
-          <div className="assessment-success"><span><Check size={34} /></span><h2>Assessment complete</h2><p>{status.message}</p><button type="button" onClick={() => onComplete({ answers, goals })}>Continue to Free Consultation <ArrowRight size={18} /></button></div>
+          <div className="assessment-success"><span><Check size={34} /></span><h2>Assessment complete</h2><p>{status.message}</p><button type="button" onClick={() => onComplete({ answers, goals })}>Finish <ArrowRight size={18} /></button></div>
         ) : (
           <>
             <div className="assessment-header">
