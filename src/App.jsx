@@ -163,6 +163,8 @@ const formatIndianCurrency = (value) => `Rs. ${Math.round(value).toLocaleString(
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
+  const [bookingOpen, setBookingOpen] = useState(false);
+  const [bookingStatus, setBookingStatus] = useState({ state: "idle", message: "" });
   const heroPhonesRef = useRef(null);
   const featureCardsRef = useRef(null);
   const closeMenu = () => setMenuOpen(false);
@@ -206,9 +208,12 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (!previewImage) return undefined;
+    if (!previewImage && !bookingOpen) return undefined;
     const closeOnEscape = (event) => {
-      if (event.key === "Escape") setPreviewImage(null);
+      if (event.key === "Escape") {
+        setPreviewImage(null);
+        setBookingOpen(false);
+      }
     };
     document.addEventListener("keydown", closeOnEscape);
     document.body.classList.add("preview-open");
@@ -216,7 +221,34 @@ function App() {
       document.removeEventListener("keydown", closeOnEscape);
       document.body.classList.remove("preview-open");
     };
-  }, [previewImage]);
+  }, [previewImage, bookingOpen]);
+
+  const submitBooking = async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const endpoint = import.meta.env.VITE_CALENDAR_BOOKING_ENDPOINT;
+    if (!endpoint) {
+      setBookingStatus({ state: "error", message: "Calendar booking is not configured yet. Please contact Moneze support." });
+      return;
+    }
+
+    const data = Object.fromEntries(new FormData(form));
+    setBookingStatus({ state: "loading", message: "Scheduling your consultation..." });
+
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(data)
+      });
+      const result = await response.json();
+      if (!result.success) throw new Error(result.message || "Unable to schedule this time.");
+      setBookingStatus({ state: "success", message: "Your consultation is scheduled. Calendar invitations have been sent." });
+      form.reset();
+    } catch (error) {
+      setBookingStatus({ state: "error", message: error.message || "Booking failed. Please try again." });
+    }
+  };
   const calculatorData = useMemo(() => {
     const months = duration * 12;
     const monthlyRate = returnRate / 100 / 12;
@@ -321,16 +353,18 @@ function App() {
                 <ArrowRight size={20} />
               </a>
             </div>
-            <a
+            <button
               className="hero-secondary-button hero-calendar-button"
-              href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Moneze%20Free%20Consultation&details=Book%20a%20consultation%20with%20the%20Moneze%20team.%20Please%20add%20your%20phone%20number%20and%20questions%20to%20this%20event.&location=Google%20Meet%20or%20phone%20call&add=service%40moneze.in"
-              target="_blank"
-              rel="noopener noreferrer"
+              type="button"
+              onClick={() => {
+                setBookingStatus({ state: "idle", message: "" });
+                setBookingOpen(true);
+              }}
               aria-label="Schedule a Moneze consultation in Google Calendar"
             >
               Schedule Calendar
               <CalendarDays size={20} />
-            </a>
+            </button>
           </div>
           <div className="proof-row" aria-label="Platform highlights">
             {highlights.map((point) => (
@@ -654,6 +688,31 @@ function App() {
           </div>
         </div>
       </section>
+
+      {bookingOpen && (
+        <div className="booking-modal" role="dialog" aria-modal="true" aria-labelledby="booking-title" onClick={() => setBookingOpen(false)}>
+          <div className="booking-dialog" onClick={(event) => event.stopPropagation()}>
+            <button className="booking-close" type="button" aria-label="Close booking form" onClick={() => setBookingOpen(false)}><X size={22} /></button>
+            <p className="eyebrow">Free consultation</p>
+            <h2 id="booking-title">Schedule with Ajay</h2>
+            <p>Choose a convenient date and time. You and Ajay will receive a calendar invitation after confirmation.</p>
+            <form className="booking-form" onSubmit={submitBooking}>
+              <label>Full name<input name="name" type="text" autoComplete="name" required /></label>
+              <label>Email address<input name="email" type="email" autoComplete="email" required /></label>
+              <label>Phone number<input name="phone" type="tel" autoComplete="tel" required /></label>
+              <div className="booking-date-time">
+                <label>Date<input name="date" type="date" min={new Date().toISOString().split("T")[0]} required /></label>
+                <label>Time<input name="time" type="time" required /></label>
+              </div>
+              <button className="booking-submit" type="submit" disabled={bookingStatus.state === "loading"}>
+                {bookingStatus.state === "loading" ? "Scheduling..." : "Confirm Consultation"}
+                <CalendarDays size={19} />
+              </button>
+              {bookingStatus.message && <p className={`booking-message ${bookingStatus.state}`} role="status">{bookingStatus.message}</p>}
+            </form>
+          </div>
+        </div>
+      )}
 
       {previewImage && (
         <div className="phone-preview-modal" role="dialog" aria-modal="true" aria-label={`${previewImage.title} screen preview`} onClick={() => setPreviewImage(null)}>
