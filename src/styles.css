@@ -70,6 +70,333 @@ body.preview-open {
   width: 100%;
 }
 
+.booking-dialog.calendly-dialog {
+  max-width: 980px;
+  padding: 24px;
+}
+
+.calendly-heading {
+  padding: 8px 52px 14px 8px;
+}
+
+.calendly-heading h2 {
+  margin-bottom: 0;
+}
+
+.calendly-frame {
+  background: #ffffff;
+  border: 0;
+  border-radius: 16px;
+  display: block;
+  height: min(680px, 72vh);
+  width: 100%;
+}
+
+.booking-confirmation {
+  background: #ffffff;
+  border: 1px solid #b8d2ff;
+  border-radius: 18px;
+  box-shadow: 0 18px 42px rgba(13, 43, 98, 0.1);
+  margin-top: 18px;
+  padding: clamp(20px, 4vw, 32px);
+  text-align: left;
+}
+
+.booking-confirmation > strong {
+  color: #078c4d;
+  display: block;
+  font-size: 1.25rem;
+  margin-bottom: 8px;
+}
+
+.booking-confirmation p {
+  color: #596477;
+  line-height: 1.55;
+  margin: 8px 0;
+}
+
+.booking-confirmation h3 {
+  color: #07163d;
+  font-size: 1.2rem;
+  margin: 24px 0 6px;
+}
+
+.booking-confirmation-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.booking-confirmation-meta span {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #dce4f0;
+  border-radius: 999px;
+  color: #172033;
+  display: inline-flex;
+  font-size: 0.85rem;
+  font-weight: 800;
+  gap: 7px;
+  padding: 9px 12px;
+}
+
+.booking-confirmation .booking-submit {
+  margin-top: 18px;
+  width: 100%;
+}
+
+.assessment-modal {
+  align-items: flex-start;
+  background: rgba(3, 13, 34, 0.78);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  overflow-y: auto;
+  padding: 28px;
+  position: fixed;
+  z-index: 120;
+}
+
+.assessment-dialog {
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+  margin: auto;
+  max-width: 820px;
+  padding: clamp(26px, 5vw, 44px);
+  position: relative;
+  width: 100%;
+}
+
+.assessment-close {
+  align-items: center;
+  background: #eef7ff;
+  border: 0;
+  border-radius: 50%;
+  color: #087be5;
+  cursor: pointer;
+  display: flex;
+  height: 42px;
+  justify-content: center;
+  position: absolute;
+  right: 18px;
+  top: 18px;
+  width: 42px;
+}
+
+.assessment-header h2 {
+  color: #07163d;
+  font-size: clamp(1.7rem, 4vw, 2.5rem);
+  margin: 0 52px 22px 0;
+}
+
+.assessment-progress-copy {
+  color: #596477;
+  display: flex;
+  font-size: 0.86rem;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.assessment-progress {
+  background: #e4eaf2;
+  border-radius: 999px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.assessment-progress span {
+  background: #087be5;
+  border-radius: inherit;
+  display: block;
+  height: 100%;
+  transition: width 300ms ease;
+}
+
+.assessment-form {
+  margin-top: 28px;
+}
+
+.assessment-fields {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.assessment-form label {
+  color: #172033;
+  display: grid;
+  font-size: 0.88rem;
+  font-weight: 850;
+  gap: 7px;
+}
+
+.assessment-form input,
+.assessment-form select,
+.assessment-form textarea {
+  background: #ffffff;
+  border: 1px solid #cbd7e7;
+  border-radius: 10px;
+  color: #071022;
+  font: inherit;
+  min-height: 48px;
+  padding: 10px 13px;
+  width: 100%;
+}
+
+.assessment-form textarea {
+  resize: vertical;
+}
+
+.assessment-form input:focus,
+.assessment-form select:focus,
+.assessment-form textarea:focus {
+  border-color: #087be5;
+  box-shadow: 0 0 0 3px rgba(8, 123, 229, 0.13);
+  outline: 0;
+}
+
+.assessment-wide {
+  grid-column: 1 / -1;
+}
+
+.goal-list > p {
+  color: #596477;
+  margin: 0 0 16px;
+}
+
+.goal-row {
+  align-items: center;
+  border-bottom: 1px solid #e4eaf2;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(160px, 0.7fr) 1.3fr;
+  padding: 13px 0;
+}
+
+.goal-row > div {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.goal-check {
+  align-items: center;
+  display: flex !important;
+  grid-template-columns: auto 1fr;
+}
+
+.goal-check input {
+  accent-color: #087be5;
+  min-height: 20px;
+  width: 20px;
+}
+
+.assessment-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-top: 28px;
+}
+
+.assessment-actions button,
+.assessment-success button {
+  align-items: center;
+  border: 0;
+  border-radius: 11px;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-weight: 900;
+  gap: 8px;
+  justify-content: center;
+  min-height: 50px;
+  padding: 0 20px;
+}
+
+.assessment-back {
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px #cbd7e7;
+  color: #536176;
+}
+
+.assessment-next,
+.assessment-success button {
+  background: #087be5;
+  color: #ffffff;
+}
+
+.assessment-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.assessment-message {
+  border-radius: 10px;
+  color: #a51d2d;
+  margin: 18px 0 0;
+  padding: 12px 14px;
+}
+
+.assessment-message.error {
+  background: #fff1f1;
+}
+
+.assessment-success {
+  padding: 36px 10px;
+  text-align: center;
+}
+
+.assessment-success > span {
+  align-items: center;
+  background: #e9fff6;
+  border-radius: 50%;
+  color: #078c4d;
+  display: inline-flex;
+  height: 70px;
+  justify-content: center;
+  width: 70px;
+}
+
+.assessment-success h2 {
+  color: #07163d;
+  margin: 18px 0 8px;
+}
+
+.assessment-success p {
+  color: #596477;
+  line-height: 1.6;
+  margin: 0 auto 24px;
+  max-width: 560px;
+}
+
+@media (max-width: 620px) {
+  .assessment-modal {
+    padding: 10px;
+  }
+
+  .assessment-dialog {
+    border-radius: 18px;
+    padding: 24px 18px;
+  }
+
+  .assessment-fields,
+  .goal-row,
+  .goal-row > div {
+    grid-template-columns: 1fr;
+  }
+
+  .assessment-wide {
+    grid-column: auto;
+  }
+
+  .assessment-actions button {
+    flex: 1;
+    padding: 0 10px;
+  }
+}
+
 .booking-dialog h2 {
   color: #07163d;
   font-size: clamp(1.8rem, 4vw, 2.5rem);
@@ -183,6 +510,18 @@ body.preview-open {
   .booking-dialog {
     border-radius: 18px;
     margin: 12px 0;
+  }
+
+  .booking-dialog.calendly-dialog {
+    padding: 12px;
+  }
+
+  .calendly-heading {
+    padding: 10px 48px 10px 6px;
+  }
+
+  .calendly-frame {
+    height: 72vh;
   }
 
   .booking-date-time {
@@ -402,13 +741,46 @@ span {
   flex: 0 0 auto;
 }
 
+.nav-actions {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.login-link {
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 12px;
+  color: #ffffff;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 0.92rem;
+  font-weight: 900;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 22px;
+  transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.login-link:hover {
+  background: #ffffff;
+  color: #087be5;
+  transform: translateY(-1px);
+}
+
 .primary-button {
   background: #ffffff;
   box-shadow: 0 24px 44px rgba(3, 19, 72, 0.18);
   color: #087be5;
-  font-size: 1.26rem;
-  min-height: 70px;
-  min-width: 330px;
+  font-size: 1.08rem;
+  min-height: 58px;
+  min-width: 280px;
 }
 
 .primary-button svg,
@@ -431,6 +803,7 @@ span {
   color: #ffffff;
   cursor: pointer;
   display: none;
+  flex: 0 0 auto;
   height: 44px;
   justify-content: center;
   width: 44px;
@@ -574,10 +947,10 @@ span {
 
 .hero-secondary-actions {
   display: flex;
-  gap: 18px;
+  gap: 14px;
   margin-left: auto;
   margin-right: auto;
-  width: min(100%, 680px);
+  width: min(100%, 590px);
 }
 
 .hero-secondary-button {
@@ -585,12 +958,14 @@ span {
   border-radius: 16px;
   display: inline-flex;
   flex: 1 1 0;
-  font-size: 1.04rem;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.94rem;
   font-weight: 850;
   gap: 14px;
   justify-content: center;
-  min-height: 66px;
-  padding: 0 24px;
+  min-height: 56px;
+  padding: 0 20px;
   position: relative;
   text-align: center;
   transition: background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
@@ -598,7 +973,7 @@ span {
 
 .hero-secondary-button svg {
   position: absolute;
-  right: 24px;
+  right: 20px;
 }
 
 .hero-consultation-button {
@@ -615,18 +990,6 @@ span {
   color: #ffffff;
 }
 
-.hero-calendar-button {
-  align-self: center;
-  background: #ffffff;
-  border: 1px solid #ffffff;
-  box-shadow: 0 18px 38px rgba(3, 19, 72, 0.16);
-  color: #087be5;
-  cursor: pointer;
-  flex: none;
-  font-family: inherit;
-  width: min(100%, 330px);
-}
-
 .hero-secondary-button:hover {
   transform: translateY(-2px);
 }
@@ -641,14 +1004,8 @@ span {
   box-shadow: 0 20px 40px rgba(0, 57, 145, 0.42);
 }
 
-.hero-calendar-button:hover {
-  background: #ffffff;
-  box-shadow: 0 22px 42px rgba(3, 19, 72, 0.24);
-}
-
 .hero-actions > .primary-button,
-.hero-secondary-actions .hero-secondary-button,
-.hero-actions > .hero-calendar-button {
+.hero-secondary-actions .hero-secondary-button {
   animation: heroButtonReveal 650ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
@@ -658,10 +1015,6 @@ span {
 
 .hero-secondary-actions .hero-explore-button {
   animation-delay: 210ms;
-}
-
-.hero-actions > .hero-calendar-button {
-  animation-delay: 310ms;
 }
 
 .hero-actions > .primary-button {
@@ -689,10 +1042,6 @@ span {
   transform: translateX(4px);
 }
 
-.hero-actions .hero-calendar-button:hover svg {
-  transform: rotate(8deg) scale(1.06);
-}
-
 @keyframes heroButtonReveal {
   from {
     clip-path: inset(0 50% 0 50% round 16px);
@@ -706,8 +1055,7 @@ span {
 
 @media (prefers-reduced-motion: reduce) {
   .hero-actions > .primary-button,
-  .hero-secondary-actions .hero-secondary-button,
-  .hero-actions > .hero-calendar-button {
+  .hero-secondary-actions .hero-secondary-button {
     animation: none;
   }
 
@@ -784,7 +1132,7 @@ span {
 .choice-card-advisor li svg { color: #087be5; }
 .choice-card-self li svg { color: #079555; }
 .choice-cta { align-items: center; border-radius: 10px; display: flex; font-weight: 900; justify-content: center; margin-top: auto; min-height: 56px; gap: 16px; }
-.choice-cta-blue { background: linear-gradient(100deg, #087be5, #178af5); color: #fff; }
+.choice-cta-blue { background: linear-gradient(100deg, #087be5, #178af5); border: 0; color: #fff; cursor: pointer; font-family: inherit; width: 100%; }
 .choice-cta-green { border: 2px solid #32a86a; color: #078c4d; }
 .choice-or { align-items: center; background: #fff; border: 1px solid #e1e7ef; border-radius: 50%; color: #34435a; display: flex; font-size: .82rem; font-weight: 950; height: 54px; justify-content: center; left: 50%; position: absolute; top: 50%; transform: translate(-50%, -50%); width: 54px; z-index: 2; }
 
@@ -828,15 +1176,15 @@ span {
 
 .hero-dual-ui::before {
   aspect-ratio: 1;
-  border: 2px solid rgba(255, 255, 255, 0.72);
+  border: 4px solid rgba(255, 255, 255, 0.78);
   border-radius: 50%;
   content: "";
-  left: 50%;
+  left: 32%;
   pointer-events: none;
   position: absolute;
   top: 49%;
   transform: translate(-50%, -50%);
-  width: min(82%, 570px);
+  width: min(64%, 450px);
   z-index: 0;
 }
 
@@ -1895,8 +2243,8 @@ span {
   }
 
   .primary-button {
-    font-size: 1.05rem;
-    min-height: 58px;
+    font-size: 0.98rem;
+    min-height: 54px;
     min-width: 0;
     width: 100%;
   }
@@ -1911,11 +2259,17 @@ span {
   }
 
   .hero-secondary-button {
+    min-height: 54px;
     width: 100%;
   }
 
   .hero-dual-ui {
     height: 420px;
+  }
+
+  .hero-dual-ui::before {
+    left: 50%;
+    width: min(88%, 350px);
   }
 
   .hero-ui-front {
@@ -2700,6 +3054,13 @@ span {
     height: 40px;
     width: 40px;
   }
+
+  .login-link {
+    border-radius: 10px;
+    font-size: 0.86rem;
+    min-height: 40px;
+    padding: 0 16px;
+  }
 }
 
 @media (max-width: 680px) {
@@ -2715,6 +3076,32 @@ span {
   .brand-mark {
     height: 32px;
     width: 32px;
+  }
+
+  .nav-actions {
+    gap: 7px;
+  }
+
+  .login-link {
+    min-height: 36px;
+    padding: 0 12px;
+  }
+}
+
+@media (max-width: 420px) {
+  .topbar {
+    gap: 8px;
+  }
+
+  .login-link {
+    font-size: 0.8rem;
+    min-height: 34px;
+    padding: 0 10px;
+  }
+
+  .menu-button {
+    height: 36px;
+    width: 36px;
   }
 }
 .brand-logo {

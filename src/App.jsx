@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import FinancialAssessment from "./FinancialAssessment";
 import {
   ArrowRight,
   BadgeCheck,
@@ -164,10 +165,15 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
   const [bookingOpen, setBookingOpen] = useState(false);
-  const [bookingStatus, setBookingStatus] = useState({ state: "idle", message: "" });
+  const [bookingConfirmed, setBookingConfirmed] = useState(false);
+  const [assessmentOpen, setAssessmentOpen] = useState(false);
   const heroPhonesRef = useRef(null);
   const featureCardsRef = useRef(null);
   const closeMenu = () => setMenuOpen(false);
+  const openBooking = () => {
+    setBookingConfirmed(false);
+    setBookingOpen(true);
+  };
   const openPreview = (image, title) => setPreviewImage({ image, title });
   const openPreviewWithKeyboard = (event, image, title) => {
     if (event.key === "Enter" || event.key === " ") {
@@ -208,11 +214,12 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (!previewImage && !bookingOpen) return undefined;
+    if (!previewImage && !bookingOpen && !assessmentOpen) return undefined;
     const closeOnEscape = (event) => {
       if (event.key === "Escape") {
         setPreviewImage(null);
         setBookingOpen(false);
+        setAssessmentOpen(false);
       }
     };
     document.addEventListener("keydown", closeOnEscape);
@@ -221,34 +228,18 @@ function App() {
       document.removeEventListener("keydown", closeOnEscape);
       document.body.classList.remove("preview-open");
     };
-  }, [previewImage, bookingOpen]);
+  }, [previewImage, bookingOpen, assessmentOpen]);
 
-  const submitBooking = async (event) => {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const endpoint = import.meta.env.VITE_CALENDAR_BOOKING_ENDPOINT;
-    if (!endpoint) {
-      setBookingStatus({ state: "error", message: "Calendar booking is not configured yet. Please contact Moneze support." });
-      return;
-    }
-
-    const data = Object.fromEntries(new FormData(form));
-    setBookingStatus({ state: "loading", message: "Scheduling your consultation..." });
-
-    try {
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(data)
-      });
-      const result = await response.json();
-      if (!result.success) throw new Error(result.message || "Unable to schedule this time.");
-      setBookingStatus({ state: "success", message: "Your consultation is scheduled. Calendar invitations have been sent." });
-      form.reset();
-    } catch (error) {
-      setBookingStatus({ state: "error", message: error.message || "Booking failed. Please try again." });
-    }
-  };
+  useEffect(() => {
+    const receiveCalendlyEvent = (event) => {
+      if (event.origin === "https://calendly.com" && event.data?.event === "calendly.event_scheduled") {
+        setBookingConfirmed(true);
+        window.setTimeout(() => setBookingOpen(false), 1800);
+      }
+    };
+    window.addEventListener("message", receiveCalendlyEvent);
+    return () => window.removeEventListener("message", receiveCalendlyEvent);
+  }, []);
   const calculatorData = useMemo(() => {
     const months = duration * 12;
     const monthlyRate = returnRate / 100 / 12;
@@ -312,16 +303,19 @@ function App() {
           <a href="#features">Features</a>
           <a href="#contact">Contact</a>
         </div>
-        <a className="start-link" href="https://www.moneze.in/CustomerAppPages/CustomerDashboardPage">Get Started</a>
-        <button
-          className="menu-button"
-          aria-expanded={menuOpen}
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
-          title="Menu"
-          onClick={() => setMenuOpen((open) => !open)}
-        >
-          <Menu size={22} />
-        </button>
+        <div className="nav-actions">
+          <a className="login-link" href="https://www.moneze.in/">Login</a>
+          <a className="start-link" href="https://www.moneze.in/CustomerAppPages/CustomerDashboardPage">Get Started</a>
+          <button
+            className="menu-button"
+            aria-expanded={menuOpen}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            title="Menu"
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            <Menu size={22} />
+          </button>
+        </div>
       </nav>
       {menuOpen && (
         <div className="mobile-menu" aria-label="Mobile navigation">
@@ -329,6 +323,7 @@ function App() {
           <a href="#ai" onClick={closeMenu}>AI Tools</a>
           <a href="#features" onClick={closeMenu}>Features</a>
           <a href="#contact" onClick={closeMenu}>Contact</a>
+          <a href="https://www.moneze.in/" onClick={closeMenu}>Login</a>
           <a className="mobile-menu-cta" href="https://www.moneze.in/CustomerAppPages/CustomerDashboardPage" onClick={closeMenu}>Get Started</a>
         </div>
       )}
@@ -344,27 +339,15 @@ function App() {
               <ArrowRight size={18} />
             </a>
             <div className="hero-secondary-actions">
-              <a className="hero-secondary-button hero-consultation-button" href="#contact">
+              <button className="hero-secondary-button hero-consultation-button" type="button" onClick={openBooking}>
                 Get Free Consultation
                 <ArrowRight size={20} />
-              </a>
-              <a className="hero-secondary-button hero-explore-button" href="#app">
+              </button>
+              <a className="hero-secondary-button hero-explore-button" href="https://www.moneze.in/">
                 Explore Moneze App
                 <ArrowRight size={20} />
               </a>
             </div>
-            <button
-              className="hero-secondary-button hero-calendar-button"
-              type="button"
-              onClick={() => {
-                setBookingStatus({ state: "idle", message: "" });
-                setBookingOpen(true);
-              }}
-              aria-label="Schedule a Moneze consultation in Google Calendar"
-            >
-              Schedule Calendar
-              <CalendarDays size={20} />
-            </button>
           </div>
           <div className="proof-row" aria-label="Platform highlights">
             {highlights.map((point) => (
@@ -394,7 +377,7 @@ function App() {
               <ul>
                 {["Financial assessment", "Personalised financial plan", "One-to-one consultation", "Recommendations tailored to you", "Ongoing review & support"].map((item) => <li key={item}><Check size={19} />{item}</li>)}
               </ul>
-              <a className="choice-cta choice-cta-blue" href="#contact">Book Free Consultation <ArrowRight size={20} /></a>
+              <button className="choice-cta choice-cta-blue" type="button" onClick={openBooking}>Get Free Consultation <ArrowRight size={20} /></button>
             </article>
             <span className="choice-or">OR</span>
             <article className="choice-card choice-card-self">
@@ -405,7 +388,7 @@ function App() {
               <ul>
                 {["Mutual funds & SIPs", "AI-powered tools", "Fund research & comparison", "Goal planning & calculators", "Seamless investing experience"].map((item) => <li key={item}><Check size={19} />{item}</li>)}
               </ul>
-              <a className="choice-cta choice-cta-green" href="#app">Explore Moneze App <ArrowRight size={20} /></a>
+              <a className="choice-cta choice-cta-green" href="https://www.moneze.in/">Explore Moneze App <ArrowRight size={20} /></a>
             </article>
           </div>
 
@@ -691,28 +674,35 @@ function App() {
 
       {bookingOpen && (
         <div className="booking-modal" role="dialog" aria-modal="true" aria-labelledby="booking-title" onClick={() => setBookingOpen(false)}>
-          <div className="booking-dialog" onClick={(event) => event.stopPropagation()}>
+          <div className="booking-dialog calendly-dialog" onClick={(event) => event.stopPropagation()}>
             <button className="booking-close" type="button" aria-label="Close booking form" onClick={() => setBookingOpen(false)}><X size={22} /></button>
-            <p className="eyebrow">Free consultation</p>
-            <h2 id="booking-title">Schedule with Ajay</h2>
-            <p>Choose a convenient date and time. You and Ajay will receive a calendar invitation after confirmation.</p>
-            <form className="booking-form" onSubmit={submitBooking}>
-              <label>Full name<input name="name" type="text" autoComplete="name" required /></label>
-              <label>Email address<input name="email" type="email" autoComplete="email" required /></label>
-              <label>Phone number<input name="phone" type="tel" autoComplete="tel" required /></label>
-              <div className="booking-date-time">
-                <label>Date<input name="date" type="date" min={new Date().toISOString().split("T")[0]} required /></label>
-                <label>Time<input name="time" type="time" required /></label>
+            <div className="calendly-heading">
+              <p className="eyebrow">Free consultation</p>
+              <h2 id="booking-title">Choose your date and time</h2>
+            </div>
+            <iframe
+              className="calendly-frame"
+              title="Book a Moneze financial consultation"
+              src="https://calendly.com/moneze-support/30min?hide_gdpr_banner=1&background_color=ffffff&text_color=07163d&primary_color=087be5"
+            />
+            {bookingConfirmed && (
+              <div className="booking-confirmation" role="status">
+                <strong>Booking confirmed ✅</strong>
+                <p>Your consultation is booked. Calendly has sent the date, time, Google Meet details, and calendar options to your email.</p>
+                <div className="booking-confirmation-meta">
+                  <span><CalendarDays size={18} /> Date and time confirmed in Calendly</span>
+                  <span><UsersRound size={18} /> Moneze Financial Advisor</span>
+                </div>
+                <h3>Help us prepare for your consultation</h3>
+                <p>Complete your short financial assessment so our advisor can understand your financial situation before the meeting.</p>
+                <button className="booking-submit" type="button" onClick={() => { setBookingOpen(false); setAssessmentOpen(true); }}>Complete Financial Assessment</button>
               </div>
-              <button className="booking-submit" type="submit" disabled={bookingStatus.state === "loading"}>
-                {bookingStatus.state === "loading" ? "Scheduling..." : "Confirm Consultation"}
-                <CalendarDays size={19} />
-              </button>
-              {bookingStatus.message && <p className={`booking-message ${bookingStatus.state}`} role="status">{bookingStatus.message}</p>}
-            </form>
+            )}
           </div>
         </div>
       )}
+
+      {assessmentOpen && <FinancialAssessment onClose={() => setAssessmentOpen(false)} />}
 
       {previewImage && (
         <div className="phone-preview-modal" role="dialog" aria-modal="true" aria-label={`${previewImage.title} screen preview`} onClick={() => setPreviewImage(null)}>
