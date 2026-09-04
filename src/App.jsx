@@ -162,7 +162,7 @@ const process = [
 
 const formatIndianCurrency = (value) => `Rs. ${Math.round(value).toLocaleString("en-IN")}`;
 function App() {
-  const [welcomeOpen, setWelcomeOpen] = useState(true);
+  const [welcomeOpen, setWelcomeOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
   const [bookingOpen, setBookingOpen] = useState(false);
