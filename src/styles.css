@@ -1063,7 +1063,7 @@ span {
 
 .hero-wave {
   bottom: -1px;
-  height: clamp(140px, 14vw, 210px);
+  height: clamp(220px, 22vw, 320px);
   left: 0;
   pointer-events: none;
   position: absolute;
@@ -1418,18 +1418,30 @@ span {
   position: absolute;
   top: 49%;
   transform: translate(-50%, -50%);
-  width: min(64%, 450px);
+  width: min(52%, 370px);
   z-index: 0;
 }
 
 @keyframes heroCircleFloat {
   0%, 100% {
+    border-radius: 50% 46% 54% 48% / 48% 54% 46% 52%;
     opacity: 0.72;
-    transform: translate(-50%, -50%) scale(0.96);
+    transform: translate(-50%, -50%) rotate(0deg) scale(0.96);
+  }
+  25% {
+    border-radius: 44% 56% 47% 53% / 55% 45% 57% 43%;
+    opacity: 0.9;
+    transform: translate(-52%, -53%) rotate(5deg) scale(1.01);
   }
   50% {
+    border-radius: 55% 45% 56% 44% / 45% 58% 42% 55%;
     opacity: 1;
-    transform: translate(-50%, -54%) scale(1.05);
+    transform: translate(-50%, -55%) rotate(0deg) scale(1.06);
+  }
+  75% {
+    border-radius: 48% 52% 43% 57% / 57% 44% 56% 43%;
+    opacity: 0.88;
+    transform: translate(-48%, -52%) rotate(-5deg) scale(1.01);
   }
 }
 
@@ -2460,11 +2472,39 @@ span {
   }
 
   .hero {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding-bottom: 150px;
     padding-top: 82px;
   }
 
   .hero-copy-wrap {
-    padding-bottom: 18px;
+    display: contents;
+  }
+
+  .hero h1,
+  .hero-copy,
+  .hero-actions {
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero h1 {
+    order: 1;
+  }
+
+  .hero-copy {
+    order: 2;
+  }
+
+  .hero-dual-ui {
+    order: 3;
+  }
+
+  .hero-actions {
+    margin-top: 0;
+    order: 4;
   }
 
   .hero .eyebrow {
@@ -2518,12 +2558,12 @@ span {
 
   .hero-dual-ui {
     height: 420px;
-    margin-top: -72px;
+    margin-top: -54px;
   }
 
   .hero-dual-ui::before {
     left: 50%;
-    width: min(88%, 350px);
+    width: min(72%, 290px);
   }
 
   .hero-ui-front {

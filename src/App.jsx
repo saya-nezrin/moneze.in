@@ -334,8 +334,6 @@ function App() {
           <a href="#contact">Contact</a>
         </div>
         <div className="nav-actions">
-          <a className="login-link" href="https://www.moneze.in/">Login</a>
-          <a className="start-link" href="https://www.moneze.in/CustomerAppPages/CustomerDashboardPage">Get Started</a>
           <button
             className="menu-button"
             aria-expanded={menuOpen}
@@ -353,21 +351,15 @@ function App() {
           <a href="#ai" onClick={closeMenu}>AI Tools</a>
           <a href="#features" onClick={closeMenu}>Features</a>
           <a href="#contact" onClick={closeMenu}>Contact</a>
-          <a href="https://www.moneze.in/" onClick={closeMenu}>Login</a>
-          <a className="mobile-menu-cta" href="https://www.moneze.in/CustomerAppPages/CustomerDashboardPage" onClick={closeMenu}>Get Started</a>
         </div>
       )}
 
       <section id="home" className="hero">
-        <div className="hero-copy-wrap">          <h1>Build wealth with smarter mutual fund investing.</h1>
+        <div className="hero-copy-wrap">          <h1>Invest smarter. Build wealth with confidence.</h1>
           <p className="hero-copy">
             100% online investing with fund discovery, AI tools, goal planning, portfolio insights, and a clean mobile-first experience.
           </p>
           <div className="hero-actions">
-            <a className="primary-button" href="https://www.moneze.in/CustomerAppPages/CustomerDashboardPage">
-              Start Investing
-              <ArrowRight size={18} />
-            </a>
             <div className="hero-secondary-actions">
               <button className="hero-secondary-button hero-consultation-button" type="button" onClick={startConsultationFlow}>
                 Get Free Consultation
