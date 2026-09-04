@@ -1071,6 +1071,16 @@ span {
   z-index: 0;
 }
 
+.hero-wave::after {
+  background: #ffffff;
+  bottom: 0;
+  content: "";
+  height: 18px;
+  left: 0;
+  position: absolute;
+  right: 0;
+}
+
 .hero-wave svg {
   animation: heroWaveDrift 7s ease-in-out infinite alternate;
   display: block;
