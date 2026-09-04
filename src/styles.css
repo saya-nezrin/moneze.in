@@ -1068,21 +1068,39 @@ span {
   pointer-events: none;
   position: absolute;
   width: 100%;
-  z-index: 1;
+  z-index: 0;
 }
 
 .hero-wave svg {
+  animation: heroWaveDrift 7s ease-in-out infinite alternate;
   display: block;
   height: 100%;
-  width: 100%;
+  margin-left: -10%;
+  width: 120%;
 }
 
 .hero-wave-back {
+  animation: heroWaveLift 5s ease-in-out infinite alternate;
   fill: rgba(214, 237, 255, 0.88);
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
 .hero-wave-front {
+  animation: heroWaveLift 6.5s ease-in-out infinite alternate-reverse;
   fill: #ffffff;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes heroWaveDrift {
+  from { transform: translateX(-2.5%); }
+  to { transform: translateX(2.5%); }
+}
+
+@keyframes heroWaveLift {
+  from { transform: translateY(0) scaleY(1); }
+  to { transform: translateY(-9px) scaleY(1.05); }
 }
 
 .hero-copy-wrap {
@@ -1405,6 +1423,7 @@ span {
   overflow: visible;
   position: relative;
   width: 100%;
+  z-index: 3;
 }
 
 .hero-dual-ui::before {
@@ -1485,6 +1504,11 @@ span {
   }
 
   .hero-dual-ui::before {
+    animation: none;
+  }
+
+  .hero-wave svg,
+  .hero-wave path {
     animation: none;
   }
 }
@@ -2475,7 +2499,7 @@ span {
     display: flex;
     flex-direction: column;
     gap: 18px;
-    padding-bottom: 150px;
+    padding-bottom: 36px;
     padding-top: 82px;
   }
 
@@ -2507,6 +2531,17 @@ span {
     order: 4;
   }
 
+  .hero-secondary-actions {
+    margin-left: auto;
+    margin-right: auto;
+    width: min(88%, 360px);
+  }
+
+  .hero-wave {
+    bottom: -1px;
+    height: 430px;
+  }
+
   .hero .eyebrow {
     font-size: 0.72rem;
     min-height: 36px;
@@ -2514,8 +2549,13 @@ span {
   }
 
   .hero h1 {
-    font-size: 2.5rem;
+    font-size: 2.12rem;
     line-height: 1.12;
+  }
+
+  .hero h1 span {
+    display: block;
+    white-space: nowrap;
   }
 
   .section-heading h2,
@@ -2676,7 +2716,7 @@ span {
 
 @media (max-width: 380px) {
   .hero h1 {
-    font-size: 2.22rem;
+    font-size: 2.02rem;
   }
 
   .hero-dual-ui {

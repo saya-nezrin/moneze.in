@@ -355,7 +355,7 @@ function App() {
       )}
 
       <section id="home" className="hero">
-        <div className="hero-copy-wrap">          <h1>Invest smarter. Build wealth with confidence.</h1>
+        <div className="hero-copy-wrap">          <h1><span>Invest smarter. Build</span> <span>wealth with confidence.</span></h1>
           <p className="hero-copy">
             100% online investing with fund discovery, AI tools, goal planning, portfolio insights, and a clean mobile-first experience.
           </p>
