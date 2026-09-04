@@ -547,6 +547,31 @@ body.preview-open {
   background: #fff1f1;
 }
 
+.assessment-form .assessment-consent {
+  align-items: flex-start;
+  background: #f3f8ff;
+  border: 1px solid #cfe2f8;
+  border-radius: 11px;
+  display: flex;
+  gap: 11px;
+  margin-top: 22px;
+  padding: 14px;
+}
+
+.assessment-form .assessment-consent input {
+  accent-color: #087be5;
+  flex: 0 0 auto;
+  min-height: 20px;
+  padding: 0;
+  width: 20px;
+}
+
+.assessment-consent span {
+  color: #536176;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
 .assessment-success {
   padding: 36px 10px;
   text-align: center;

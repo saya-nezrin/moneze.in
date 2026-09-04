@@ -168,6 +168,7 @@ function App() {
   const [bookingOpen, setBookingOpen] = useState(false);
   const [bookingConfirmed, setBookingConfirmed] = useState(false);
   const [assessmentOpen, setAssessmentOpen] = useState(false);
+  const [consultationDetails, setConsultationDetails] = useState(null);
   const heroPhonesRef = useRef(null);
   const featureCardsRef = useRef(null);
   const closeMenu = () => setMenuOpen(false);
@@ -704,7 +705,8 @@ function App() {
       {welcomeOpen && (
         <WelcomeQuestionnaire
           onClose={() => setWelcomeOpen(false)}
-          onConsultation={() => {
+          onConsultation={(details) => {
+            setConsultationDetails(details);
             setWelcomeOpen(false);
             openBooking();
           }}
@@ -739,7 +741,7 @@ function App() {
         </div>
       )}
 
-      {assessmentOpen && <FinancialAssessment onClose={() => setAssessmentOpen(false)} onComplete={completeAssessment} />}
+      {assessmentOpen && <FinancialAssessment initialDetails={consultationDetails} consultationScheduled={bookingConfirmed} onClose={() => setAssessmentOpen(false)} onComplete={completeAssessment} />}
 
       {previewImage && (
         <div className="phone-preview-modal" role="dialog" aria-modal="true" aria-label={`${previewImage.title} screen preview`} onClick={() => setPreviewImage(null)}>

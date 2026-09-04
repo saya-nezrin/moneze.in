@@ -1,4 +1,4 @@
-import { isValidEmail, normalizeEmail, requirePost, sendJson, verifyOtpRequest } from "../../../lib/emailOtp.js";
+import { createVerificationSession, isValidEmail, normalizeEmail, requirePost, sendJson, verifyOtpRequest } from "../../../lib/emailOtp.js";
 
 export default async function handler(request, response) {
   if (!requirePost(request, response)) return;
@@ -18,6 +18,8 @@ export default async function handler(request, response) {
     if (!result.valid) {
       return sendJson(response, 400, { verified: false, message: "The verification code is incorrect." });
     }
+    const session = createVerificationSession(email);
+    response.setHeader("Set-Cookie", `moneze_verified=${encodeURIComponent(session)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=7200`);
     return sendJson(response, 200, { verified: true });
   } catch (error) {
     console.error("Email OTP verification failed", { message: error instanceof Error ? error.message : "Unknown error" });

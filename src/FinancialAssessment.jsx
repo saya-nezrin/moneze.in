@@ -59,7 +59,7 @@ const steps = [
 
 const goalNames = ["Retirement", "Child education", "Home", "Marriage", "Wealth creation", "Emergency fund", "Other goals"];
 
-function Field({ field, value, onChange }) {
+function Field({ field, value, onChange, verifiedEmail }) {
   const [name, label, type, options] = field;
   if (type === "select") {
     return <label>{label}<select name={name} value={value || ""} onChange={(event) => onChange(name, event.target.value)} required><option value="">Select</option>{options.map((option) => <option key={option}>{option}</option>)}</select></label>;
@@ -67,15 +67,16 @@ function Field({ field, value, onChange }) {
   if (type === "textarea") return <label className="assessment-wide">{label}<textarea name={name} value={value || ""} onChange={(event) => onChange(name, event.target.value)} rows="3" /></label>;
   if (type === "radio") return <fieldset className="assessment-options assessment-wide"><legend>{label}</legend>{options.map((option) => <label key={option}><input name={name} type="radio" value={option} checked={value === option} onChange={() => onChange(name, option)} required />{option}</label>)}</fieldset>;
   if (type === "checkboxes") return <fieldset className="assessment-options assessment-wide"><legend>{label}</legend>{options.map((option) => <label key={option}><input type="checkbox" checked={(value || []).includes(option)} onChange={() => onChange(name, (value || []).includes(option) ? value.filter((item) => item !== option) : [...(value || []), option])} />{option}</label>)}</fieldset>;
-  return <label>{label}<input name={name} type={type} value={value || ""} onChange={(event) => onChange(name, event.target.value)} min={type === "number" ? "0" : undefined} required={stepRequired(name)} /></label>;
+  return <label>{label}<input name={name} type={type} value={value || ""} onChange={(event) => onChange(name, event.target.value)} min={type === "number" ? "0" : undefined} required={stepRequired(name)} readOnly={name === "email" && Boolean(verifiedEmail)} /></label>;
 }
 
 const stepRequired = (name) => ["name", "age", "phone", "email", "city", "monthlyIncome", "householdExpenses", "emiLoans", "emergencyFund", "investmentValue", "existingSip", "investmentExperience", "sipCapacity"].includes(name);
 
-export default function FinancialAssessment({ onClose, onComplete }) {
+export default function FinancialAssessment({ initialDetails, consultationScheduled, onClose, onComplete }) {
   const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState({});
+  const [answers, setAnswers] = useState({ name: initialDetails?.name || "", email: initialDetails?.email || "" });
   const [goals, setGoals] = useState({});
+  const [consentAccepted, setConsentAccepted] = useState(false);
   const [status, setStatus] = useState({ state: "idle", message: "" });
   const current = steps[step];
 
@@ -92,17 +93,24 @@ export default function FinancialAssessment({ onClose, onComplete }) {
   const submit = async (event) => {
     event.preventDefault();
     if (!event.currentTarget.reportValidity()) return;
-    const endpoint = import.meta.env.VITE_FINANCIAL_ASSESSMENT_API_URL;
-    if (!endpoint || endpoint.includes("example.com")) {
-      setStatus({ state: "success", message: "Thank you. Your assessment is complete and will help the advisor prepare for your scheduled consultation." });
+    if (!consentAccepted) {
+      setStatus({ state: "error", message: "Please provide consent before submitting your assessment." });
       return;
     }
+    const endpoint = "/api/financial-assessments";
     setStatus({ state: "loading", message: "Submitting your assessment..." });
     try {
       const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answers, goals: Object.entries(goals).filter(([, value]) => value), assessmentStatus: "complete", submittedAt: new Date().toISOString() })
+        body: JSON.stringify({
+          profile: { name: initialDetails?.name || answers.name, investmentRange: initialDetails?.investmentValue || "" },
+          answers,
+          goals: Object.fromEntries(Object.entries(goals).filter(([, value]) => value)),
+          assessmentStatus: "complete",
+          consultationScheduled: Boolean(consultationScheduled),
+          consentAccepted,
+        })
       });
       if (!response.ok) throw new Error("The assessment could not be submitted.");
       setStatus({ state: "success", message: "Thank you. Your financial assessment has been submitted successfully. Your advisor will review it before the scheduled consultation." });
@@ -136,7 +144,8 @@ export default function FinancialAssessment({ onClose, onComplete }) {
                 if (name === "healthInsurance") return answers.hasHealthInsurance === "Yes";
                 if (name === "termInsurance") return answers.hasTermInsurance === "Yes";
                 return true;
-              }).map((field) => <Field key={field[0]} field={field} value={answers[field[0]]} onChange={updateAnswer} />)}</div>}
+              }).map((field) => <Field key={field[0]} field={field} value={answers[field[0]]} onChange={updateAnswer} verifiedEmail={initialDetails?.email} />)}</div>}
+              {step === steps.length - 1 && <label className="assessment-consent"><input type="checkbox" checked={consentAccepted} onChange={(event) => setConsentAccepted(event.target.checked)} required /><span>I consent to Moneze securely storing these details and contacting me regarding my consultation.</span></label>}
               {status.message && <p className={`assessment-message ${status.state}`} role="status">{status.message}</p>}
               <div className="assessment-actions">
                 <button className="assessment-back" type="button" disabled={step === 0} onClick={() => setStep((value) => value - 1)}><ArrowLeft size={18} />Back</button>
