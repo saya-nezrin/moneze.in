@@ -323,6 +323,7 @@ function App() {
 
   return (
     <main>
+      <a className="login-link desktop-login-outside" href="https://www.moneze.in/">Login</a>
       <nav className="topbar">
         <a className="brand" href="#home" aria-label="Moneze home" onClick={closeMenu}>
           <img className="brand-logo" src="/moneze-logo.png" alt="Moneze" />
