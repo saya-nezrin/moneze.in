@@ -18,8 +18,7 @@ function WelcomeQuestionnaire({ onClose, onConsultation }) {
     if (!contactValid || otpStatus.state === "sending") return;
     setOtpStatus({ state: "sending", message: "Sending verification code…" });
     try {
-      const endpoint = import.meta.env.VITE_EMAIL_OTP_SEND_URL;
-      if (!endpoint) throw new Error("Email OTP service is not configured yet.");
+      const endpoint = "/api/auth/email/send-otp";
       const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: details.email.trim().toLowerCase() }) });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(payload.message || "The OTP could not be sent.");
@@ -35,8 +34,7 @@ function WelcomeQuestionnaire({ onClose, onConsultation }) {
     if (!otpRequestRef.current || !/^\d{6}$/.test(otp) || otpStatus.state === "verifying") return;
     setOtpStatus({ state: "verifying", message: "Verifying your code…" });
     try {
-      const endpoint = import.meta.env.VITE_EMAIL_OTP_VERIFY_URL;
-      if (!endpoint) throw new Error("Email OTP verification is not configured yet.");
+      const endpoint = "/api/auth/email/verify-otp";
       const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: details.email.trim().toLowerCase(), otp, requestId: otpRequestRef.current }) });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok || payload.verified === false) throw new Error(payload.message || "The verification code is incorrect.");
