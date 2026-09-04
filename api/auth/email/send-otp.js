@@ -11,12 +11,23 @@ export default async function handler(request, response) {
   const domain = process.env.MSG91_EMAIL_DOMAIN;
   const fromEmail = process.env.MSG91_FROM_EMAIL;
   const templateId = process.env.MSG91_EMAIL_TEMPLATE_ID;
-  if (!authKey || !domain || !fromEmail || !templateId || !process.env.OTP_SECRET) {
+  const otpSecret = process.env.OTP_SECRET;
+  if (!authKey || !domain || !fromEmail || !templateId || !otpSecret || otpSecret.length < 32) {
+    console.error("Email OTP configuration is incomplete", {
+      authKey: Boolean(authKey),
+      domain: Boolean(domain),
+      fromEmail: Boolean(fromEmail),
+      templateId: Boolean(templateId),
+      otpSecretValid: Boolean(otpSecret && otpSecret.length >= 32),
+    });
     return sendJson(response, 503, { message: "Email verification is temporarily unavailable." });
   }
 
   const otp = crypto.randomInt(100000, 1000000).toString();
   try {
+    // Create the signed verification request before sending the email. This
+    // prevents delivery of an OTP that the application cannot later verify.
+    const requestId = createOtpRequest(email, otp);
     const msg91Response = await fetch("https://control.msg91.com/api/v5/email/send", {
       method: "POST",
       headers: {
@@ -37,7 +48,7 @@ export default async function handler(request, response) {
       return sendJson(response, 502, { message: "We could not send the verification email. Please try again." });
     }
 
-    return sendJson(response, 200, { requestId: createOtpRequest(email, otp) });
+    return sendJson(response, 200, { requestId });
   } catch (error) {
     console.error("Email OTP delivery failed", { message: error instanceof Error ? error.message : "Unknown error" });
     return sendJson(response, 502, { message: "We could not send the verification email. Please try again." });
