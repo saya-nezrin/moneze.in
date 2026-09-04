@@ -57,7 +57,13 @@ function WelcomeQuestionnaire({ onClose, onConsultation }) {
         </aside>
         <section className="welcome-form-panel">
           <header className="welcome-progress-row">
-            <button type="button" onClick={() => setStep((current) => Math.max(1, current - 1))} disabled={step === 1} aria-label="Previous step"><ArrowLeft size={24} /></button>
+            <button
+              type="button"
+              onClick={() => step === 1 ? onClose() : setStep((current) => Math.max(1, current - 1))}
+              aria-label={step === 1 ? "Return to website" : "Previous step"}
+            >
+              <ArrowLeft size={24} />
+            </button>
             <span>Step {step} of 4</span><div className="welcome-progress-track" aria-hidden="true"><span style={{ width: `${step * 25}%` }} /></div>
           </header>
           <div className="welcome-step" key={step}>
