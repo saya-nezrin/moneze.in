@@ -1,4 +1,5 @@
 import { isValidEmail, readCookie, requirePost, sendJson, verifyVerificationSession } from "../lib/emailOtp.js";
+import { getSupabaseConfiguration, supabaseHeaders } from "../lib/supabaseAdmin.js";
 
 const allowedStatuses = new Set(["complete"]);
 
@@ -33,8 +34,7 @@ export default async function handler(request, response) {
     return sendJson(response, 400, { message: "Complete the required information and consent before submitting." });
   }
 
-  const supabaseUrl = process.env.SUPABASE_URL?.replace(/\/$/, "");
-  const supabaseKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const { url: supabaseUrl, secretKey: supabaseKey } = getSupabaseConfiguration();
   if (!supabaseUrl || !supabaseKey) {
     console.error("Supabase configuration is incomplete");
     return sendJson(response, 503, { message: "Submission storage is temporarily unavailable." });
@@ -53,16 +53,10 @@ export default async function handler(request, response) {
   };
 
   try {
-    const databaseHeaders = {
-      apikey: supabaseKey,
+    const databaseHeaders = supabaseHeaders(supabaseKey, {
       "Content-Type": "application/json",
       Prefer: "return=representation",
-    };
-    // Legacy service-role keys are JWTs; new sb_secret_* keys must only be
-    // sent through the apikey header.
-    if (!supabaseKey.startsWith("sb_secret_")) {
-      databaseHeaders.Authorization = `Bearer ${supabaseKey}`;
-    }
+    });
     const databaseResponse = await fetch(`${supabaseUrl}/rest/v1/consultation_leads`, {
       method: "POST",
       headers: databaseHeaders,
