@@ -3,7 +3,19 @@ import { ArrowLeft, Download, Eye, LogOut, RefreshCw, Search, ShieldCheck, Users
 
 const leadStatuses = ["new", "contacted", "scheduled", "completed", "closed"];
 const formatDate = (value) => value ? new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value)) : "—";
-const displayValue = (value) => Array.isArray(value) ? value.join(", ") : value && typeof value === "object" ? JSON.stringify(value) : String(value || "—");
+const formatFieldName = (value) => String(value).replace(/_/g, " ").replace(/([a-z])([A-Z])/g, "$1 $2").replace(/^./, (letter) => letter.toUpperCase());
+const displayValue = (value) => {
+  if (Array.isArray(value)) return value.join(", ");
+  if (value && typeof value === "object") {
+    return Object.entries(value).map(([key, item]) => {
+      const formattedItem = key.toLowerCase().includes("amount") && !Number.isNaN(Number(item))
+        ? new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(Number(item))
+        : displayValue(item);
+      return `${formatFieldName(key)}: ${formattedItem}`;
+    }).join(" • ");
+  }
+  return String(value || "—");
+};
 const csvCell = (value) => `"${String(value ?? "").replaceAll('"', '""')}"`;
 
 export default function AdminDashboard() {
@@ -161,6 +173,6 @@ export default function AdminDashboard() {
       {message && <p className="admin-error" role="alert">{message}</p>}
       <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Customer</th><th>Investment range</th><th>Consultation</th><th>Submitted</th><th>Status</th><th>Details</th></tr></thead><tbody>{filteredLeads.map((lead) => <tr key={lead.id}><td><strong>{lead.name}</strong><span>{lead.email}</span></td><td>{lead.investment_range || "—"}</td><td>{lead.consultation_scheduled ? "Scheduled" : "Not confirmed"}</td><td>{formatDate(lead.created_at)}</td><td><select value={lead.status} onChange={(event) => updateStatus(lead, event.target.value)}>{leadStatuses.map((status) => <option key={status}>{status}</option>)}</select></td><td><button className="admin-view" type="button" onClick={() => setSelectedLead(lead)}><Eye size={17} />View</button></td></tr>)}</tbody></table>{!loading && !filteredLeads.length && <div className="admin-empty">No matching consultation leads.</div>}</div>
     </section>
-    {selectedLead && <div className="admin-detail-overlay" onClick={() => setSelectedLead(null)}><aside className="admin-detail" onClick={(event) => event.stopPropagation()}><button className="admin-detail-close" onClick={() => setSelectedLead(null)} aria-label="Close details">×</button><p>VERIFIED LEAD</p><h2>{selectedLead.name}</h2><a href={`mailto:${selectedLead.email}`}>{selectedLead.email}</a><div className="admin-detail-meta"><span>Investment range<strong>{selectedLead.investment_range || "—"}</strong></span><span>Submitted<strong>{formatDate(selectedLead.created_at)}</strong></span></div><h3>Financial assessment</h3><div className="admin-answer-list">{Object.entries(selectedLead.assessment_data?.answers || {}).map(([key, value]) => <div key={key}><span>{key.replace(/([A-Z])/g, " $1")}</span><strong>{displayValue(value)}</strong></div>)}</div><h3>Goals</h3><div className="admin-answer-list">{Object.entries(selectedLead.assessment_data?.goals || {}).map(([key, value]) => <div key={key}><span>{key}</span><strong>{displayValue(value)}</strong></div>)}{!Object.keys(selectedLead.assessment_data?.goals || {}).length && <span>No goals selected.</span>}</div></aside></div>}
+    {selectedLead && <div className="admin-detail-overlay" onClick={() => setSelectedLead(null)}><aside className="admin-detail" onClick={(event) => event.stopPropagation()}><button className="admin-detail-close" onClick={() => setSelectedLead(null)} aria-label="Close details">×</button><p>VERIFIED LEAD</p><h2>{selectedLead.name}</h2><a href={`mailto:${selectedLead.email}`}>{selectedLead.email}</a><div className="admin-detail-meta"><span>Investment range<strong>{selectedLead.investment_range || "—"}</strong></span><span>Submitted<strong>{formatDate(selectedLead.created_at)}</strong></span></div><h3>Financial assessment</h3><div className="admin-answer-list">{Object.entries(selectedLead.assessment_data?.answers || {}).map(([key, value]) => <div key={key}><span>{formatFieldName(key)}</span><strong>{displayValue(value)}</strong></div>)}</div><h3>Goals</h3><div className="admin-answer-list">{Object.entries(selectedLead.assessment_data?.goals || {}).map(([key, value]) => <div key={key}><span>{formatFieldName(key)}</span><strong>{displayValue(value)}</strong></div>)}{!Object.keys(selectedLead.assessment_data?.goals || {}).length && <span>No goals selected.</span>}</div></aside></div>}
   </main>;
 }
