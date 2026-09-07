@@ -208,6 +208,15 @@ function App() {
   const [stepUp, setStepUp] = useState(0);
 
   useEffect(() => {
+    const openLinkedConsultation = () => {
+      if (window.location.hash === "#consultation") setWelcomeOpen(true);
+    };
+    openLinkedConsultation();
+    window.addEventListener("hashchange", openLinkedConsultation);
+    return () => window.removeEventListener("hashchange", openLinkedConsultation);
+  }, []);
+
+  useEffect(() => {
     const phones = heroPhonesRef.current;
     if (!phones) return undefined;
 
@@ -396,10 +405,12 @@ function App() {
       </nav>
       {menuOpen && (
         <div className="mobile-menu" aria-label="Mobile navigation">
-          <a href="#app" onClick={closeMenu}>App</a>
-          <a href="#ai" onClick={closeMenu}>AI Tools</a>
-          <a href="#features" onClick={closeMenu}>Features</a>
-          <a href="#contact" onClick={closeMenu}>Contact</a>
+          <a href="/" onClick={closeMenu}>Home</a>
+          <a href="/financial-planning" onClick={closeMenu}>Financial Planning</a>
+          <a href="/mutual-funds" onClick={closeMenu}>Mutual Funds</a>
+          <a href="/learn" onClick={closeMenu}>Learn</a>
+          <a href="/about" onClick={closeMenu}>About Moneze</a>
+          <a href="/contact" onClick={closeMenu}>Contact</a>
         </div>
       )}
 

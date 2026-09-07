@@ -1,0 +1,10 @@
+{
+  "rewrites": [
+    { "source": "/financial-planning", "destination": "/index.html" },
+    { "source": "/mutual-funds", "destination": "/index.html" },
+    { "source": "/learn", "destination": "/index.html" },
+    { "source": "/learn/:slug", "destination": "/index.html" },
+    { "source": "/about", "destination": "/index.html" },
+    { "source": "/contact", "destination": "/index.html" }
+  ]
+}
