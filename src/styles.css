@@ -112,12 +112,8 @@ body.preview-open {
   position: relative;
 }
 
-.welcome-progress-row { align-items: center; display: grid; gap: 16px; grid-template-columns: auto auto 1fr; left: clamp(40px, 6vw, 92px); position: absolute; right: clamp(76px, 7vw, 110px); top: 42px; }
-.welcome-progress-row button { background: transparent; border: 0; color: #667085; cursor: pointer; display: flex; padding: 0; }
-.welcome-progress-row button:disabled { opacity: .25; }
-.welcome-progress-row > span { color: #667085; font-size: 1.05rem; font-weight: 750; white-space: nowrap; }
-.welcome-progress-track { background: #e3eaf2; border-radius: 10px; height: 5px; overflow: hidden; }
-.welcome-progress-track span { background: #1594f5; border-radius: inherit; display: block; height: 100%; transition: width 280ms ease; }
+.welcome-back-row { left: clamp(40px, 6vw, 92px); position: absolute; top: 42px; }
+.welcome-back-row button { background: transparent; border: 0; color: #667085; cursor: pointer; display: flex; padding: 0; }
 .welcome-step { animation: welcomeStepIn 280ms ease both; margin: auto 0; width: 100%; }
 .welcome-kicker { color: #4caff9 !important; font-size: .82rem !important; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
 .welcome-step h1 { font-size: clamp(2rem, 3.2vw, 3.5rem); line-height: 1.08; margin: 12px 0 14px; max-width: 760px; }
@@ -158,7 +154,7 @@ body.preview-open {
   .welcome-shell { border-radius: 0; grid-template-columns: 1fr; min-height: 100vh; }
   .welcome-story { display: none; }
   .welcome-form-panel { min-height: 100vh; padding: 100px clamp(20px, 7vw, 56px) 80px; }
-  .welcome-progress-row { left: clamp(20px, 7vw, 56px); right: 78px; top: 36px; }
+  .welcome-back-row { left: clamp(20px, 7vw, 56px); top: 36px; }
 }
 
 @media (max-width: 560px) {

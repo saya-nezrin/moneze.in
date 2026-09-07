@@ -56,7 +56,7 @@ function WelcomeQuestionnaire({ onClose, onConsultation }) {
           <a className="welcome-help" href="https://wa.me/919972654330" target="_blank" rel="noreferrer"><MessageCircle size={20} /> Need help?</a>
         </aside>
         <section className="welcome-form-panel">
-          <header className="welcome-progress-row">
+          <header className="welcome-back-row">
             <button
               type="button"
               onClick={() => step === 1 ? onClose() : setStep((current) => Math.max(1, current - 1))}
@@ -64,7 +64,6 @@ function WelcomeQuestionnaire({ onClose, onConsultation }) {
             >
               <ArrowLeft size={24} />
             </button>
-            <span>Step {step} of 4</span><div className="welcome-progress-track" aria-hidden="true"><span style={{ width: `${step * 25}%` }} /></div>
           </header>
           <div className="welcome-step" key={step}>
             {step === 1 && <><p className="welcome-kicker">Welcome to Moneze</p><h1 id="welcome-title">What is your name?</h1><p>Let us personalise your experience.</p><label className="welcome-field"><span>Full name</span><input autoFocus value={details.name} onChange={update("name")} placeholder="Enter your full name" autoComplete="name" /></label><button className="welcome-next" type="button" disabled={!canContinue} onClick={next}>Next <ArrowRight size={20} /></button></>}
