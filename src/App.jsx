@@ -473,6 +473,9 @@ function App() {
             </div>
           </div>
           <p className="hero-support-line">Education First. Investment Second.</p>
+          <p className="hero-desktop-intro">
+            Personalized financial planning and mutual fund investment guidance designed around your goals, financial situation and risk profile.
+          </p>
           <div className="proof-row" aria-label="Platform highlights">
             {highlights.map((point) => (
               <span key={point}><Check size={16} /> {point}</span>
@@ -492,7 +495,6 @@ function App() {
       </section>
 
       <section className="desktop-hero-description" aria-label="Moneze financial planning introduction">
-        <p>Personalized financial planning and mutual fund investment guidance designed around your goals, financial situation and risk profile.</p>
         <p>You don&apos;t have to know exactly what you should invest in. We start by understanding where you are today, what you want to achieve, and what your money needs to do for you.</p>
       </section>
 
@@ -659,7 +661,7 @@ function App() {
         <div className="wealth-heading">
           <div>
             <p className="eyebrow">Investment Calculator</p>
-            <h2>Plan Your Investments With the Right<br /><span>Numbers</span></h2>
+            <h2>Plan Your Investments With the Right<span className="calculator-title-break"><br /></span> <span>Numbers</span></h2>
             <p className="wealth-supporting-copy">Before investing, understand what your money could potentially do over time. Use Moneze&apos;s financial calculators to explore different investment scenarios and make more informed decisions.</p>
           </div>
           <div className="wealth-tabs" role="tablist" aria-label="Investment calculator type">
@@ -872,25 +874,70 @@ function App() {
 
       <section className="trust-section">
         <div className="trust-copy">
-          <p className="eyebrow">Trust & Utility</p>
-          <h2>A clean platform experience for serious financial decisions.</h2>
+          <p className="eyebrow">Trust &amp; Platform</p>
+          <h2>Built for confident mutual fund investing.</h2>
           <p>
-            Moneze presents fund exploration, AI assistance, KYC, reports, transactions, calculators, and portfolio analysis in a clear interface designed for confident customer action.
+            Moneze brings secure investing infrastructure, personalised financial guidance and intelligent tools together in one simple platform.
           </p>
+          <div className="ondc-mark" aria-label="Open Network for Digital Commerce">
+            <strong>ONDC</strong>
+            <span>Open Network for Digital Commerce</span>
+          </div>
         </div>
         <div className="assurance-list">
-          <div><ShieldCheck size={20} /> KYC-ready customer workflows</div>
-          <div><FileCheck2 size={20} /> Reports and transaction visibility</div>
-          <div><LineChart size={20} /> Portfolio tracking and fund performance</div>
-          <div><Sparkles size={20} /> AI-assisted investment tools</div>
+          <article><span><Check size={18} /></span><div><h3>ONDC-enabled investment infrastructure</h3><p>Access mutual fund investments through a secure digital ecosystem.</p></div></article>
+          <article><span><Check size={18} /></span><div><h3>100% Safe, SEBI &amp; AMFI Approved</h3><p>Your trust matters most.</p><small>✓ Investments through SEBI-registered Mutual Funds<br />✓ AMFI-compliant processes</small></div></article>
+          <article><span><Check size={18} /></span><div><h3>Secure KYC &amp; Transactions</h3><p>Complete KYC and manage your investment transactions through the Moneze platform.</p></div></article>
+          <article><span><Check size={18} /></span><div><h3>Portfolio Tracking &amp; Analysis</h3><p>Track your investments, returns and portfolio performance in one place.</p></div></article>
+          <article><span><Check size={18} /></span><div><h3>AI-Powered Financial Tools</h3><p>Compare funds, analyse portfolios and understand mutual funds with intelligent tools.</p></div></article>
+        </div>
+        <div className="amc-partners">
+          <div className="amc-partners-heading">
+            <span><Check size={18} /></span>
+            <div><h3>Partnered with Leading Asset Management Companies</h3><p>Access a wide range of mutual fund investment options through Moneze.</p></div>
+          </div>
+          <div className="amc-marquee" aria-label="Asset management company partners">
+            <div className="amc-marquee-track">
+              {[0, 1].map((copy) => [
+                { name: "HDFC AMC", domain: "hdfcfund.com" },
+                { name: "ICICI Prudential AMC", domain: "icicipruamc.com" },
+                { name: "Bandhan AMC", domain: "bandhanmutual.com" },
+                { name: "Axis AMC", domain: "axismf.com" },
+                { name: "Nippon India AMC", domain: "mf.nipponindiaim.com" },
+                { name: "Kotak AMC", domain: "kotakmf.com" },
+                { name: "Aditya Birla Sun Life AMC", domain: "mutualfund.adityabirlacapital.com" },
+                { name: "DSP AMC", domain: "dspim.com" },
+                { name: "UTI AMC", domain: "utimf.com" },
+                { name: "HSBC AMC", domain: "assetmanagement.hsbc.co.in" },
+                { name: "Canara Robeco AMC", domain: "canararobeco.com" },
+                { name: "Invesco AMC", domain: "invescomutualfund.com" },
+              ].map(({ name, domain }) => (
+                <span key={`${copy}-${name}`} aria-label={copy === 0 ? `${name} logo` : undefined} aria-hidden={copy === 1 ? "true" : undefined} title={name}>
+                  <img
+                    src={`https://www.google.com/s2/favicons?domain=${domain}&sz=128`}
+                    alt=""
+                    loading="lazy"
+                    onError={(event) => event.currentTarget.parentElement?.classList.add("logo-missing")}
+                  />
+                  <b>{name}</b>
+                </span>
+              )))}
+            </div>
+          </div>
         </div>
       </section>
 
       <section id="contact" className="contact-section">
         <div>
           <p className="eyebrow">Start Now</p>
-          <h2>Bring customers into a better investment experience.</h2>
-          <p>Connect with Moneze for product access, onboarding support, and customer assistance.</p>
+          <h2>Your Money Deserves a Plan.</h2>
+          <p>You don&apos;t need to have everything figured out before you start.</p>
+          <p>Tell us about your financial situation, and we&apos;ll help you understand your goals, create a personalized plan and explore suitable mutual fund investment options.</p>
+          <div className="contact-actions">
+            <button type="button" onClick={startConsultationFlow}>Get Free Financial Consultation <ArrowRight size={19} /></button>
+            <a href="https://www.moneze.in/">Explore Moneze App <ArrowRight size={19} /></a>
+          </div>
+          <small className="contact-reassurance"><ShieldCheck size={17} /> Start with understanding. Invest with confidence.</small>
         </div>
         <div className="contact-card">
           <div className="contact-card-header">

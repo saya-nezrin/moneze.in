@@ -1308,6 +1308,16 @@ span {
   width: 100%;
 }
 
+.hero-desktop-intro {
+  color: rgba(255, 255, 255, 0.96);
+  font-size: clamp(1rem, 1.3vw, 1.2rem);
+  font-weight: 650;
+  line-height: 1.65;
+  margin: clamp(52px, 6vh, 76px) auto 0;
+  max-width: 760px;
+  text-align: center;
+}
+
 .hero-actions {
   align-items: center;
   display: flex;
@@ -2000,6 +2010,56 @@ span {
   padding: clamp(64px, 9vw, 112px) clamp(20px, 5vw, 76px);
 }
 
+.contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 11px;
+  margin-top: 28px;
+}
+
+.contact-actions button,
+.contact-actions a {
+  align-items: center;
+  border-radius: 11px;
+  display: inline-flex;
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 900;
+  gap: 10px;
+  justify-content: center;
+  min-height: 50px;
+  padding: 0 17px;
+}
+
+.contact-actions button {
+  background: #ffffff;
+  border: 0;
+  color: #087be5;
+  cursor: pointer;
+}
+
+.contact-actions a {
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  color: #ffffff;
+}
+
+.contact-reassurance {
+  align-items: center;
+  color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  font-size: 0.78rem;
+  font-weight: 750;
+  gap: 8px;
+  margin-top: 17px;
+}
+
+@media (max-width: 680px) {
+  .contact-actions { flex-direction: column; }
+  .contact-actions button,
+  .contact-actions a { width: 100%; }
+  .contact-reassurance { justify-content: center; text-align: center; }
+}
+
 .section-heading,
 .ai-copy,
 .trust-copy {
@@ -2101,7 +2161,7 @@ span {
 }
 
 .app-showcase {
-  align-items: center;
+  align-items: start;
   display: grid;
   gap: clamp(36px, 6vw, 90px);
   grid-template-columns: minmax(280px, 0.72fr) minmax(520px, 1.28fr);
@@ -2111,6 +2171,7 @@ span {
 
 .app-showcase-copy {
   max-width: 440px;
+  padding-top: 42px;
 }
 
 .app-showcase-copy h2 {
@@ -2410,6 +2471,7 @@ span {
   .app-showcase-copy {
     margin: 0 auto;
     max-width: 620px;
+    padding-top: 0;
   }
 
   .app-phone-stage {
@@ -2747,25 +2809,159 @@ span {
 
 .assurance-list {
   display: grid;
-  gap: 14px;
+  gap: 11px;
 }
 
-.assurance-list div {
-  align-items: center;
+.assurance-list article {
+  align-items: flex-start;
   background: #ffffff;
   border: 1px solid #dce4f0;
-  border-radius: 10px;
+  border-radius: 14px;
+  box-shadow: 0 10px 24px rgba(19, 57, 99, 0.05);
   color: #172033;
   display: flex;
-  font-weight: 850;
   gap: 12px;
-  min-height: 62px;
-  padding: 0 18px;
+  padding: 17px 18px;
 }
 
-.assurance-list svg {
-  color: #1193f5;
+.assurance-list article > span,
+.amc-partners-heading > span {
+  align-items: center;
+  background: #eaf5ff;
+  border-radius: 50%;
+  color: #087be5;
+  display: flex;
   flex: 0 0 auto;
+  height: 32px;
+  justify-content: center;
+  width: 32px;
+}
+
+.assurance-list h3,
+.amc-partners-heading h3 {
+  color: #17233b;
+  font-size: 0.98rem;
+  margin: 3px 0 5px;
+}
+
+.assurance-list p,
+.amc-partners-heading p {
+  color: #627087;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.assurance-list small {
+  color: #3f5873;
+  display: block;
+  font-size: 0.75rem;
+  line-height: 1.65;
+  margin-top: 7px;
+}
+
+.ondc-mark {
+  align-items: center;
+  background: #f1f8ff;
+  border: 1px solid #cfe5f8;
+  border-radius: 14px;
+  display: inline-flex;
+  gap: 13px;
+  margin-top: 28px;
+  padding: 12px 16px;
+}
+
+.ondc-mark strong {
+  background: linear-gradient(135deg, #6a4ee8, #087be5);
+  border-radius: 9px;
+  color: #ffffff;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  padding: 9px 10px;
+}
+
+.ondc-mark span {
+  color: #344861;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-align: left;
+}
+
+.amc-partners {
+  background: #f6faff;
+  border: 1px solid #dce8f4;
+  border-radius: 20px;
+  grid-column: 1 / -1;
+  min-width: 0;
+  overflow: hidden;
+  padding: 22px 0;
+}
+
+.amc-partners-heading {
+  align-items: flex-start;
+  display: flex;
+  gap: 12px;
+  padding: 0 24px 18px;
+}
+
+.amc-marquee {
+  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  overflow: hidden;
+}
+
+.amc-marquee-track {
+  animation: amcMarquee 30s linear infinite;
+  display: flex;
+  gap: 12px;
+  width: max-content;
+}
+
+.amc-marquee-track > span {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #d8e4f0;
+  border-radius: 10px;
+  color: #203550;
+  display: flex;
+  flex: 0 0 auto;
+  font-size: 0.8rem;
+  font-weight: 900;
+  height: 76px;
+  justify-content: center;
+  min-width: 145px;
+  padding: 10px 18px;
+  text-align: center;
+}
+
+.amc-marquee-track img {
+  display: block;
+  height: 48px;
+  max-width: 118px;
+  object-fit: contain;
+  width: auto;
+}
+
+.amc-marquee-track b { display: none; }
+.amc-marquee-track .logo-missing img { display: none; }
+.amc-marquee-track .logo-missing b { display: block; }
+
+@keyframes amcMarquee {
+  to { transform: translateX(calc(-50% - 6px)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .amc-marquee-track { animation: none; }
+}
+
+@media (max-width: 680px) {
+  .trust-section { align-items: stretch; }
+  .trust-copy { text-align: center; }
+  .ondc-mark { justify-content: center; width: 100%; }
+  .assurance-list article { padding: 15px; }
+  .amc-partners { border-radius: 16px; }
+  .amc-partners-heading { padding: 0 16px 16px; }
+  .amc-marquee-track > span { height: 68px; min-width: 124px; padding: 9px 14px; }
+  .amc-marquee-track img { height: 42px; max-width: 100px; }
 }
 
 .contact-section {
@@ -3166,6 +3362,10 @@ span {
 
   .hero-mobile-description {
     display: block;
+  }
+
+  .hero-desktop-intro {
+    display: none;
   }
 
   .desktop-hero-description {
@@ -3578,8 +3778,9 @@ span {
 }
 
 .wealth-heading {
-  align-items: end;
+  align-items: stretch;
   display: flex;
+  flex-direction: column;
   gap: 24px;
   justify-content: space-between;
   margin: 0 auto 34px;
@@ -3588,10 +3789,13 @@ span {
 
 .wealth-heading h2 {
   color: #071022;
-  font-size: clamp(2.15rem, 5vw, 4.2rem);
+  font-size: clamp(2.15rem, 3.5vw, 4.2rem);
   line-height: 1;
   margin: 8px 0 0;
+  white-space: nowrap;
 }
+
+.calculator-title-break { display: none; }
 
 .wealth-heading h2 span {
   color: #1559bf;
@@ -3612,8 +3816,12 @@ span {
   border-radius: 999px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  min-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 760px;
+  min-width: 0;
   padding: 3px;
+  width: 100%;
 }
 
 .wealth-tabs button {
@@ -3812,6 +4020,9 @@ span {
     align-items: stretch;
     flex-direction: column;
   }
+
+  .wealth-heading h2 { white-space: normal; }
+  .calculator-title-break { display: inline; }
 
   .wealth-tabs {
     min-width: 0;
@@ -4499,4 +4710,50 @@ span {
   .admin-toolbar select { min-height: 46px; }
   .admin-detail { padding: 70px 22px 30px; }
   .admin-detail-meta { grid-template-columns: 1fr; }
+}
+
+@media (min-width: 1081px) {
+  .desktop-hero-description {
+    padding-bottom: 48px;
+    padding-top: 44px;
+  }
+
+  .investment-paths {
+    padding-bottom: 64px;
+    padding-top: 58px;
+  }
+
+  .education-first {
+    margin-bottom: 58px;
+    margin-top: 52px;
+  }
+
+  .wealth-protection {
+    margin-top: 54px;
+  }
+
+  .section,
+  .ai-section,
+  .app-showcase,
+  .offerings-section,
+  .trust-section,
+  .contact-section {
+    padding-bottom: 72px;
+    padding-top: 72px;
+  }
+
+  .app-showcase {
+    min-height: 620px;
+  }
+
+  .app-phone-showcase {
+    margin-bottom: -72px;
+    transform: translateY(-72px);
+  }
+
+  .wealth-section,
+  .why-moneze {
+    padding-bottom: 72px;
+    padding-top: 72px;
+  }
 }
