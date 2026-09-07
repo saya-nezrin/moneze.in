@@ -171,6 +171,7 @@ function App() {
   const [consultationDetails, setConsultationDetails] = useState(null);
   const heroPhonesRef = useRef(null);
   const featureCardsRef = useRef(null);
+  const journeyRef = useRef(null);
   const closeMenu = () => setMenuOpen(false);
   const openBooking = () => {
     setBookingConfirmed(false);
@@ -230,6 +231,52 @@ function App() {
 
     observer.observe(cards);
     return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const journey = journeyRef.current;
+    const mobile = window.matchMedia("(max-width: 560px)");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (!journey || reducedMotion.matches) return undefined;
+
+    const cards = Array.from(journey.children);
+    let current = 0;
+    let timer;
+    let resumeTimer;
+    let visible = false;
+    const stop = () => window.clearInterval(timer);
+    const start = () => {
+      stop();
+      if (!mobile.matches || !visible) return;
+      timer = window.setInterval(() => {
+        current = (current + 1) % cards.length;
+        journey.scrollTo({ left: cards[current].offsetLeft - 16, behavior: "smooth" });
+      }, 3000);
+    };
+    const pauseForInteraction = () => {
+      stop();
+      window.clearTimeout(resumeTimer);
+      resumeTimer = window.setTimeout(start, 6000);
+    };
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting;
+        visible ? start() : stop();
+      },
+      { threshold: 0.45 }
+    );
+
+    observer.observe(journey);
+    mobile.addEventListener("change", start);
+    journey.addEventListener("pointerdown", pauseForInteraction);
+
+    return () => {
+      stop();
+      window.clearTimeout(resumeTimer);
+      observer.disconnect();
+      mobile.removeEventListener("change", start);
+      journey.removeEventListener("pointerdown", pauseForInteraction);
+    };
   }, []);
 
   useEffect(() => {
@@ -426,7 +473,7 @@ function App() {
             <p>OUR PROCESS</p>
             <h2>A simple 5-step journey to your financial goals</h2>
           </div>
-          <div className="journey-grid">
+          <div ref={journeyRef} className="journey-grid">
             {[
               ["01", FileCheck2, "Understand", "Share your financial details, goals, income and expenses."],
               ["02", PieChart, "Plan", "We create a personalised financial plan for you."],

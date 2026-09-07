@@ -888,7 +888,7 @@ span {
   left: 50%;
   max-width: 1524px;
   padding: 0 clamp(18px, 3vw, 34px);
-  position: fixed;
+  position: absolute;
   top: 14px;
   transform: translateX(-50%);
   width: min(1524px, calc(100% - 10vw));
@@ -1465,7 +1465,24 @@ span {
   .choice-card-heading { align-items: center; }
   .choice-icon { height: 56px; width: 56px; }
   .choice-or { top: 50%; }
-  .journey-grid { grid-template-columns: 1fr; }
+  .journey-grid {
+    display: flex;
+    gap: 16px;
+    margin-inline: -16px;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    padding: 8px 16px 22px;
+    scroll-padding-inline: 16px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .journey-grid::-webkit-scrollbar { display: none; }
+  .journey-step {
+    flex: 0 0 min(78vw, 310px);
+    padding: 0 14px;
+    scroll-snap-align: start;
+  }
 }
 
 .hero-dual-ui {
