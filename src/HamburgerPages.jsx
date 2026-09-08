@@ -17,7 +17,7 @@ const fallbackArticles = [
   { slug: "sip-investing-explained", title: "How Does SIP Investing Work?", excerpt: "Learn how regular investing can support disciplined, long-term financial habits.", category: "SIP & Investing", published_at: "2026-08-24", featured: false }
 ];
 
-function usePageMeta({ title, description, path, schema }) {
+function usePageMeta({ title, description, keywords, path, schema }) {
   useEffect(() => {
     document.title = title;
     const upsert = (selector, create, value) => {
@@ -27,11 +27,13 @@ function usePageMeta({ title, description, path, schema }) {
       return element;
     };
     upsert('meta[name="description"]', { tag: "meta", attrs: { name: "description" }, valueAttribute: "content" }, description);
+
+    if (keywords) upsert('meta[name="keywords"]', { tag: "meta", attrs: { name: "keywords" }, valueAttribute: "content" }, keywords);
     const canonical = upsert('link[rel="canonical"]', { tag: "link", attrs: { rel: "canonical" }, valueAttribute: "href" }, `https://moneze-in.vercel.app${path}`);
     let script;
     if (schema) { script = document.createElement("script"); script.type = "application/ld+json"; script.dataset.monezePageSchema = "true"; script.textContent = JSON.stringify(schema); document.head.appendChild(script); }
     return () => { canonical.remove(); script?.remove(); };
-  }, [title, description, path, schema]);
+  }, [title, description, keywords, path, schema]);
 }
 
 function PageHeader() {
@@ -62,25 +64,34 @@ function IconCards({ items }) { return <div className="hub-card-grid">{items.map
 function Faq({ items }) { return <div className="hub-faq">{items.map(([question, answer]) => <details key={question}><summary>{question}<ChevronDown size={20} /></summary><p>{answer}</p></details>)}</div>; }
 
 const planningFaqs = [
-  ["What is financial planning?", "Financial planning brings together your financial position, priorities, goals, protection needs, and investments in one structured plan."],
-  ["Do I need to know my financial goals before booking?", "No. We can help you identify and prioritize meaningful goals based on your situation and available surplus."],
-  ["Is financial planning only about investing?", "No. A complete plan can also consider cash flow, emergency savings, insurance, risk, and existing investments."],
-  ["Will Moneze recommend mutual funds?", "Where appropriate, mutual funds can form part of a personalized strategy based on your goals, risk profile, and time horizon."],
-  ["Do I have to invest after the consultation?", "No. The consultation helps you understand your financial position and plan. You decide whether to proceed."],
-  ["Can I invest directly through the Moneze App?", "Yes. You can independently explore mutual funds, SIPs, goals, portfolio information, and investment tools."],
-  ["Is financial planning a one-time activity?", "A plan should evolve as your income, circumstances, investments, and goals change. Reviews and rebalancing may be appropriate over time."]
+  ["What is financial planning?", "Financial planning is the process of understanding your financial situation, identifying your goals and creating a structured plan for managing your money and investments."],
+  ["Do I need to know my financial goals before booking a consultation?", "No. You can start even if you're unsure about your goals. During the planning process, we help you identify and prioritize goals based on your financial situation and priorities."],
+  ["Is financial planning only about investing?", "No. A complete financial plan can also consider cash flow, emergency savings, insurance, financial goals, risk and existing investments."],
+  ["Will Moneze recommend mutual funds?", "Where appropriate, mutual fund investments can form part of your personalized investment strategy. Recommendations are based on your financial situation, goals, risk profile and investment horizon."],
+  ["Do I have to invest after the consultation?", "No. The purpose of the consultation is to help you understand your financial situation and plan. You can decide whether you want to proceed with the investment recommendations."],
+  ["Can I invest directly through the Moneze App?", "Yes. Customers can also use the Moneze App to explore mutual funds, SIPs, goals, portfolio information and other investment tools."],
+  ["Is financial planning a one-time activity?", "Your financial plan should evolve as your circumstances and goals change. Moneze's ongoing approach includes portfolio reviews and rebalancing where appropriate."]
 ];
 
 export function FinancialPlanningPage() {
-  const schema = useMemo(() => ({ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: planningFaqs.map(([name, text]) => ({ "@type": "Question", name, acceptedAnswer: { "@type": "Answer", text } })) }), []);
-  usePageMeta({ title: "Financial Planning in Kerala | Personalized Financial Planning | Moneze", description: "Get personalized financial planning in Kerala with Moneze. Understand your finances, identify your goals, plan investments, and get mutual fund guidance.", path: "/financial-planning", schema });
+  const schema = useMemo(() => ({ "@context": "https://schema.org", "@graph": [
+    { "@type": "Service", name: "Personalized Financial Planning", serviceType: "Financial planning and investment planning", areaServed: { "@type": "AdministrativeArea", name: "Kerala" }, provider: { "@type": "Organization", name: "Moneze", url: "https://moneze-in.vercel.app/" }, url: "https://moneze-in.vercel.app/financial-planning", description: "Personalized financial planning, goal-based investment planning and mutual fund guidance designed around your financial situation, goals and risk profile." },
+    { "@type": "FAQPage", mainEntity: planningFaqs.map(([name, text]) => ({ "@type": "Question", name, acceptedAnswer: { "@type": "Answer", text } })) }
+  ] }), []);
+  usePageMeta({
+    title: "Financial Planning Kerala | Personalized Investment Planning | Moneze",
+    description: "Explore financial planning in Kerala with Moneze: personalized financial planning, goal-based investment planning and mutual fund guidance built around your finances and risk profile.",
+    keywords: "financial planning Kerala, financial planning in Kerala, personalized financial planning, personal financial planning, financial planning services Kerala, financial plan Kerala, goal based financial planning, financial planning and investment, investment planning Kerala, investment planning, personalized investment planning, mutual fund investment planning, investment advisor Kerala, mutual fund investment Kerala, mutual funds Kerala, mutual fund SIP Kerala, SIP investment Kerala, SIP investment planning, financial goal planning, goal based investing, goal based investment planning, financial goals planning, goal based mutual fund investment",
+    path: "/financial-planning",
+    schema
+  });
   const planCards = [
     { icon: WalletCards, title: "Your Financial Position", text: "Income, expenses, savings, assets, liabilities, and existing investments." },
-    { icon: Goal, title: "Your Financial Goals", text: "Retirement, education, a home, wealth creation, and other priorities." },
+    { icon: Goal, title: "Your Financial Goals", text: "Turn important life goals into measurable financial targets." },
     { icon: BarChart3, title: "Your Risk Profile", text: "Understand how risk, time horizon, and goals influence your approach." },
-    { icon: ShieldCheck, title: "Your Protection", text: "Consider emergency funds, health insurance, and term insurance as part of your foundation." },
-    { icon: PieChart, title: "Your Investment Strategy", text: "Build an investment approach aligned with your goals and financial capacity." },
-    { icon: TrendingUp, title: "Your Future Progress", text: "Review your portfolio and financial progress as life changes." }
+    { icon: ShieldCheck, title: "Your Protection", text: "Consider health insurance and term insurance as part of your overall financial protection." },
+    { icon: PieChart, title: "Your Investment Strategy", text: "Build an investment strategy around your goals and risk profile." },
+    { icon: TrendingUp, title: "Your Future Progress", text: "Review your portfolio and financial progress over time." }
   ];
   const journey = [
     ["01", "Understand Your Finances", "Income, expenses, EMIs, savings, investments, insurance, and commitments."],
@@ -92,22 +103,44 @@ export function FinancialPlanningPage() {
     ["07", "Review & Rebalance", "Review progress as your income, goals, and circumstances change."]
   ];
   return <PageShell>
-    <section className="hub-hero planning-hero"><div><p className="hub-eyebrow">PERSONALIZED FINANCIAL PLANNING</p><h1>A Financial Plan Built Around Your Life.</h1><p>Your income, expenses, goals, responsibilities, and priorities are unique. Your financial plan should be too. Moneze helps you understand where you are today and create a plan around your goals and risk profile.</p><ConsultationCta /><small>No investment decision is required to start a consultation.</small></div><div className="plan-visual"><span>YOUR PLAN</span>{["Financial position", "Goals", "Risk profile", "Protection", "Investment strategy"].map((item) => <div key={item}><Check size={17} />{item}</div>)}</div></section>
+    <section className="hub-hero planning-hero"><div><p className="hub-eyebrow">PERSONALIZED FINANCIAL PLANNING</p><h1>A Financial Plan Built Around Your Life.</h1><p>Your income, expenses, goals, responsibilities, and priorities are unique. Your financial plan should be too. Moneze helps you understand your current financial position, identify what you want your money to achieve and create a personalized financial plan designed around your goals and risk profile.</p><ConsultationCta /><small>No investment decision is required to start a consultation.</small></div><div className="plan-visual"><span>YOUR PLAN</span>{["Financial position", "Goals", "Risk profile", "Protection", "Investment strategy"].map((item) => <div key={item}><Check size={17} />{item}</div>)}</div></section>
     <section className="hub-section hub-problem"><SectionHeading eyebrow="START WITH THE WHY" title="Financial Planning Is More Than Choosing an Investment."><p>Instead of starting with “Which mutual fund should I invest in?”, begin with “What am I trying to achieve with my money?”</p></SectionHeading><div className="planning-equation">{["Income", "Expenses", "Savings", "Insurance", "Existing investments", "Goals", "Risk profile"].map((item) => <span key={item}>{item}</span>)}<strong>Personalized financial plan</strong></div></section>
     <section className="hub-section hub-tint"><SectionHeading eyebrow="THE COMPLETE PICTURE" title="What Is Personalized Financial Planning?"><p>It is the process of understanding your complete financial situation and creating a structured plan around personal goals.</p></SectionHeading><IconCards items={planCards} /></section>
-    <section className="hub-section hub-highlight"><div><p className="hub-eyebrow">START WITHOUT ALL THE ANSWERS</p><h2>You Don’t Need to Know Your Financial Goals Before You Start.</h2><p>You may want to build wealth or financial security without knowing how much you need or when you need it. That’s okay. You bring your questions. We help you build the plan.</p><ConsultationCta /></div></section>
+    <section className="hub-section hub-highlight planning-answers"><div>
+      <header className="planning-answers-heading"><p className="hub-eyebrow">START WITHOUT ALL THE ANSWERS</p><h2>You Don&apos;t Need to Know Your Financial Goals Before You Start.</h2></header>
+      <div className="planning-answers-grid">
+        <div className="planning-goals"><p>Sometimes you know you want to:</p><ul><li>Build wealth</li><li>Prepare for retirement</li><li>Fund your child&apos;s education</li><li>Buy a home</li><li>Build financial security</li></ul><p>…but you don&apos;t know how much you need, when you need it or how to plan for it.</p></div>
+        <div className="planning-guidance"><p>That&apos;s okay.</p><p>You don&apos;t have to arrive with a complete financial plan.</p><p>During the planning process, we help you understand your current financial position and identify meaningful financial goals based on your priorities and available surplus.</p></div>
+      </div>
+      <div className="planning-answers-action"><strong className="planning-answers-highlight">You bring your questions. We help you build the plan.</strong><div className="hub-cta-row"><a className="hub-btn hub-btn-primary planning-answers-cta" href="/#consultation">Get Free Financial Consultation <ArrowRight size={18} /></a></div></div>
+    </div></section>
     <section className="hub-section"><SectionHeading eyebrow="THE MONEZE ADVISOR JOURNEY" title="How Your Financial Planning Journey Works"><p>A clear process designed to move from uncertainty to a financial plan you understand.</p></SectionHeading><div className="hub-timeline">{journey.map(([num, title, text]) => <article key={num}><span>{num}</span><div><h3>{title}</h3><p>{text}</p></div></article>)}</div></section>
     <section className="hub-section hub-tint"><SectionHeading title="One Plan. Multiple Parts of Your Financial Life." /><IconCards items={[
       { icon: CircleDollarSign, title: "Cash Flow", text: "Understand income, expenses, and available surplus." },
-      { icon: ShieldCheck, title: "Wealth Protection", text: "Consider emergency funds, health insurance, and term insurance." },
-      { icon: Target, title: "Financial Goals", text: "Turn important life goals into measurable targets." },
-      { icon: TrendingUp, title: "Investment Planning", text: "Build a strategy around your goals and risk profile." },
-      { icon: PieChart, title: "Mutual Fund Portfolio", text: "Explore suitable options aligned with your plan." },
-      { icon: Sparkles, title: "Ongoing Review", text: "Review your portfolio and progress over time." }
+      { icon: ShieldCheck, title: "Wealth Protection", text: "Consider health insurance and term insurance as part of your overall financial protection." },
+      { icon: Target, title: "Financial Goals", text: "Turn important life goals into measurable financial targets." },
+      { icon: TrendingUp, title: "Investment Planning", text: "Build an investment strategy around your goals and risk profile." },
+      { icon: PieChart, title: "Mutual Fund Portfolio", text: "Explore suitable mutual fund investment options aligned with your plan." },
+      { icon: Sparkles, title: "Ongoing Review", text: "Review your portfolio and financial progress over time." }
     ]} /></section>
-    <section className="hub-section hub-education"><p className="hub-eyebrow">EDUCATION FIRST</p><h2>Understand Before You Invest.</h2><p>Understand why you are investing, what you are investing for, how much you may need, how long you may need to stay invested, and how the investment fits your financial plan.</p><strong>Education First. Investment Second.</strong></section>
-    <section className="hub-section hub-split"><div><SectionHeading eyebrow="MONEZE + MUTUAL FUNDS" title="From Financial Plan to Mutual Fund Portfolio"><p>We help you understand and build a mutual fund investment strategy aligned with your financial plan—not chase a generic “best fund.”</p></SectionHeading><ConsultationCta /></div><div className="purpose-list">{["Financial goals", "Investment horizon", "Risk profile", "Monthly surplus", "Existing investments", "Asset allocation"].map((item) => <span key={item}><Check size={17} />{item}</span>)}</div></section>
-    <section className="hub-section hub-tint"><SectionHeading title="Financial Planning for Every Stage of Life" /><div className="hub-stage-grid">{["Starting your investment journey", "Growing your wealth", "Planning for your family", "Preparing for retirement", "Building financial security"].map((item) => <article key={item}><h3>{item}</h3><p>A structured plan helps connect today’s decisions to tomorrow’s priorities.</p></article>)}</div></section>
+    <section className="hub-section hub-education">
+      <p className="hub-eyebrow">EDUCATION FIRST</p>
+      <h2>Understand Before You Invest.</h2>
+      <div className="hub-education-belief"><p>We believe investing should not begin with a product.</p><p>It should begin with understanding.</p></div>
+      <p className="hub-education-intro">Before making an investment decision, you should understand:</p>
+      <div className="hub-education-grid">
+        {["Why you’re investing.", "What you’re investing for.", "How much you may need to invest.", "How long you may need to stay invested.", "What risks you may take.", "How the investment fits into your overall financial plan."].map((item, index) => <article key={item}><span>{String(index + 1).padStart(2, "0")}</span><p>{item}</p></article>)}
+      </div>
+      <strong>Education First. Investment Second.</strong>
+    </section>
+    <section className="hub-section hub-split"><div><SectionHeading eyebrow="MONEZE + MUTUAL FUNDS" title="From Financial Plan to Mutual Fund Portfolio"><p>We help you understand and build a mutual fund investment strategy aligned with your financial plan—not chase a generic “best fund.”</p></SectionHeading><ConsultationCta /></div><div className="purpose-list">{["Financial goals", "Investment horizon", "Risk profile", "Available monthly surplus", "Existing investments", "Asset allocation", "Required investment amount"].map((item) => <span key={item}><Check size={17} />{item}</span>)}</div></section>
+    <section className="hub-section hub-tint"><SectionHeading title="Financial Planning for Every Stage of Life" /><div className="hub-stage-grid">{[
+      ["Starting Your Investment Journey", "Not sure where to begin?"],
+      ["Growing Your Wealth", "Already investing but don’t know whether your investments are aligned with your goals?"],
+      ["Planning for Your Family", "Preparing for children’s education, home purchase or other family goals?"],
+      ["Preparing for Retirement", "Want to understand how much you may need and how to prepare?"],
+      ["Building Financial Security", "Want to strengthen your emergency fund, insurance and investment strategy?"]
+    ].map(([title, text]) => <article key={title}><h3>{title}</h3><p>{text}</p></article>)}</div><div className="hub-cta-row hub-stage-cta"><a className="hub-btn hub-btn-primary" href="/#consultation">Get Free Financial Consultation <ArrowRight size={18} /></a></div></section>
     <section className="hub-section"><SectionHeading eyebrow="FAQ" title="Frequently Asked Questions About Financial Planning" /><Faq items={planningFaqs} /></section>
     <section className="hub-final"><h2>Don’t Just Invest. Have a Plan.</h2><p>Start by understanding where you are today and where you want your money to take you.</p><ConsultationCta /><small>No obligation to invest.</small></section>
   </PageShell>;
@@ -134,28 +167,51 @@ export function MutualFundsPage() {
       { icon: BarChart3, title: "Different Options", text: "Categories and strategies are available across different risk levels." }
     ]} /><p className="hub-risk-note">Mutual fund investments are subject to market risks. Read all scheme-related documents carefully before investing.</p></section>
     <section className="hub-section hub-tint"><SectionHeading title="Why Consider Mutual Funds?" /><IconCards items={[
-      { icon: TrendingUp, title: "Wealth Creation", text: "Invest for long-term financial growth." }, { icon: Target, title: "Goal Planning", text: "Build investments around specific goals." },
-      { icon: Sparkles, title: "SIP Investing", text: "Invest a fixed amount regularly." }, { icon: PieChart, title: "Diversification", text: "Invest across a portfolio rather than one security." },
-      { icon: WalletCards, title: "Flexibility", text: "Choose an approach based on your situation and objectives." }
+      { icon: TrendingUp, title: "Wealth Creation", text: "Invest for long-term financial growth." }, { icon: Target, title: "Goal Planning", text: "Build investments around specific financial goals." },
+      { icon: Sparkles, title: "SIP Investing", text: "Invest a fixed amount regularly instead of relying on one-time investments." }, { icon: PieChart, title: "Diversification", text: "Spread investments across a portfolio rather than relying on a single security." },
+      { icon: WalletCards, title: "Flexibility", text: "Choose investment approaches based on your financial situation and objectives." }
     ]} /></section>
-    <section className="hub-section hub-split sip-block"><div><p className="hub-eyebrow">SYSTEMATIC INVESTMENT PLAN</p><h2>Start Small. Invest Consistently.</h2><p>A SIP lets you invest a predetermined amount at regular intervals and can help turn investing into a disciplined habit.</p><ConsultationCta primary="app" /></div><div className="vertical-flow">{["Monthly income", "Monthly surplus", "SIP", "Long-term investment", "Financial goal"].map((item) => <span key={item}>{item}</span>)}</div></section>
+    <section className="hub-section hub-split sip-block"><div><p className="hub-eyebrow">SYSTEMATIC INVESTMENT PLAN</p><h2>Start Small. Invest Consistently.</h2><p>A SIP lets you invest a predetermined amount at regular intervals and can help turn investing into a disciplined habit.</p><ConsultationCta primary="app" /></div><div className="vertical-flow">{["Monthly income", "Monthly surplus", "SIP", "Long-term investment", "Financial goal"].map((item) => <span key={item}>{item}</span>)}<a className="hub-btn hub-btn-primary sip-calculator-cta" href="/#calculator">Calculate your SIP <ArrowRight size={18} /></a></div></section>
     <section className="hub-section hub-tint hub-split"><div><SectionHeading title="Investing Doesn’t Always Have to Be Monthly."><p>A lump sum may also be invested according to your financial plan. The approach depends on goals, horizon, existing investments, and risk profile.</p></SectionHeading><a className="hub-btn hub-btn-primary" href={appUrl}>Explore Moneze App <ArrowRight size={18} /></a></div><div className="lumpsum-visual"><CircleDollarSign size={60} /><strong>One amount</strong><span>A plan-aligned investment approach</span></div></section>
-    <section className="hub-section hub-highlight"><SectionHeading eyebrow="DON’T CHOOSE A FUND FIRST" title="The Best Mutual Fund Isn’t the Same for Everyone."><p>The right question isn’t “Which fund is best?” It’s “Which investment approach is appropriate for my financial plan?”</p></SectionHeading><div className="hub-consider-grid">{[[Goal,"Your goal"],[Target,"Your time horizon"],[BarChart3,"Your risk profile"],[WalletCards,"Your investment capacity"],[PieChart,"Your existing portfolio"]].map(([Icon,text])=><span key={text}><Icon size={22}/>{text}</span>)}</div></section>
-    <section className="hub-section"><SectionHeading title="Your Mutual Funds Should Have a Purpose." /><div className="hub-stage-grid">{["Retirement", "Child’s education", "Home purchase", "Wealth creation", "Emergency fund"].map((item) => <article key={item}><h3>{item}</h3><p>Connect the investment approach to the goal, required timeline, and financial capacity.</p></article>)}</div><ConsultationCta /></section>
-    <section className="hub-section hub-tint"><SectionHeading title="Understand the Different Types of Mutual Funds" /><IconCards items={[
-      { icon: TrendingUp, title: "Equity Funds", text: "Primarily invest in equities and generally involve higher market risk and longer horizons." },
-      { icon: Landmark, title: "Debt Funds", text: "Primarily invest in fixed-income securities with distinct risk and return characteristics." },
-      { icon: PieChart, title: "Hybrid Funds", text: "Combine asset classes according to the fund’s strategy." },
+    <section className="hub-section hub-highlight mutual-choice-section">
+      <SectionHeading eyebrow="DON’T CHOOSE A FUND FIRST" title="The Best Mutual Fund Isn’t the Same for Everyone."><p>A fund that may be appropriate for one investor may not be appropriate for another.</p><p className="mutual-choice-intro">Before choosing a mutual fund, consider:</p></SectionHeading>
+      <div className="mutual-choice-grid">{[
+        [Goal, "Your Goal", "What are you investing for?"],
+        [Target, "Your Time Horizon", "When will you need the money?"],
+        [BarChart3, "Your Risk Profile", "How much investment volatility can you reasonably accept?"],
+        [WalletCards, "Your Investment Capacity", "How much can you invest without affecting your financial commitments?"],
+        [PieChart, "Your Existing Portfolio", "How does a new investment fit with what you already own?"]
+      ].map(([Icon, title, text]) => <article key={title}><span><Icon size={23} /></span><div><h3>{title}</h3><p>{text}</p></div></article>)}</div>
+      <div className="mutual-choice-highlight"><p>The right question isn&apos;t “Which fund is best?”</p><strong>It&apos;s “Which investment approach is appropriate for my financial plan?”</strong></div>
+    </section>
+    <section className="hub-section"><SectionHeading title="Your Mutual Funds Should Have a Purpose." /><div className="hub-stage-grid">{[
+      ["Retirement", "Long-term investment strategy."],
+      ["Child’s Education", "Invest toward a future education requirement."],
+      ["Home Purchase", "Plan investments around your expected purchase timeline."],
+      ["Wealth Creation", "Build long-term wealth based on your financial capacity and objectives."],
+      ["Emergency Fund", "Maintain appropriate liquidity separately from long-term investments."]
+    ].map(([title, text]) => <article key={title}><h3>{title}</h3><p>{text}</p></article>)}</div><p className="mutual-purpose-closing">Instead of asking “Where should I invest?”, start with “What am I investing for?”</p><ConsultationCta /></section>
+    <section className="hub-section hub-tint"><SectionHeading title="Understand the Different Types of Mutual Funds"><p>Mutual funds differ in what they invest in, their investment objectives and the level of risk involved.</p><p>The page can introduce categories at a high level without overwhelming the customer.</p></SectionHeading><IconCards items={[
+      { icon: TrendingUp, title: "Equity Funds", text: "Primarily invest in equities and are generally associated with higher market risk and long-term investment horizons." },
+      { icon: Landmark, title: "Debt Funds", text: "Primarily invest in fixed-income securities and have different risk and return characteristics from equity funds." },
+      { icon: PieChart, title: "Hybrid Funds", text: "Combine different asset classes according to the fund's investment strategy." },
       { icon: BarChart3, title: "Index Funds", text: "Seek to track the performance of a particular market index." },
       { icon: Sparkles, title: "Other Categories", text: "Other categories are available for different investment objectives." }
     ]} /><a className="hub-btn hub-btn-primary hub-centered-btn" href={appUrl}>Explore Mutual Funds in Moneze App <ArrowRight size={18} /></a></section>
     <section className="hub-section"><SectionHeading title="From Understanding to Investing" /><div className="hub-option-grid"><article><span>OPTION 01</span><h3>Invest on Your Own</h3><p>Explore and compare funds, start SIPs, track your portfolio, plan goals, use calculators, and access AI tools.</p><a href={appUrl}>Explore Moneze App <ArrowRight size={17} /></a></article><article><span>OPTION 02</span><h3>Get Personalized Guidance</h3><p>Start with your finances, goals, risk profile, and investment capacity before discussing suitable options.</p><a href="/#consultation">Get Free Financial Consultation <ArrowRight size={17} /></a></article></div></section>
-    <section className="hub-section hub-tint"><SectionHeading title="A Simpler Way to Approach Mutual Fund Investing" /><div className="hub-invest-journey">{["Understand", "Plan", "Choose", "Invest", "Track", "Review"].map((item,index)=><span key={item}><b>{String(index+1).padStart(2,"0")}</b>{item}</span>)}</div></section>
+    <section className="hub-section hub-tint"><SectionHeading title="A Simpler Way to Approach Mutual Fund Investing" /><div className="hub-invest-journey">{[
+      ["Understand", "Learn how mutual funds work."],
+      ["Plan", "Connect investments to your financial goals."],
+      ["Choose", "Explore mutual funds based on your investment approach."],
+      ["Invest", "Invest through the Moneze platform."],
+      ["Track", "Monitor your portfolio and investment progress."],
+      ["Review", "Review your portfolio and make changes when appropriate."]
+    ].map(([title, text], index) => <article key={title}><b>{String(index + 1).padStart(2, "0")}</b><h3>{title}</h3><p>{text}</p></article>)}</div><p className="hub-invest-review-note">Moneze&apos;s ongoing model includes annual portfolio reviews and rebalancing where appropriate.</p></section>
     <section className="hub-section"><SectionHeading title="Built for a Simple and Transparent Investing Experience" /><IconCards items={[
-      { icon: Landmark, title: "ONDC-Enabled Infrastructure", text: "Digital infrastructure designed to support mutual fund investing." },
-      { icon: HeartHandshake, title: "Leading AMCs", text: "Access investment options from leading asset management companies." },
-      { icon: ShieldCheck, title: "Secure KYC & Transactions", text: "Complete KYC and manage transactions through a structured digital process." },
-      { icon: BarChart3, title: "Portfolio Tracking", text: "Track investment value, returns, and performance in one place." }
+      { icon: Landmark, title: "ONDC-Enabled Investment Infrastructure", text: "Digital investment infrastructure designed to support mutual fund investing." },
+      { icon: HeartHandshake, title: "Partnered With Leading Asset Management Companies", text: "Access mutual fund investment options from leading AMCs through the Moneze platform." },
+      { icon: ShieldCheck, title: "Secure KYC & Transactions", text: "Complete KYC and manage investment transactions through a structured digital process." },
+      { icon: BarChart3, title: "Portfolio Tracking & Analysis", text: "Track your investment value, returns and portfolio performance in one place." }
     ]} /></section>
     <section className="hub-section hub-education"><p className="hub-eyebrow">MONEZE DIGITAL TOOLS</p><h2>Research Before You Invest.</h2><p>Compare funds, ask Mutual Fund GPT, and analyse your portfolio using tools inside the Moneze ecosystem.</p><a className="hub-btn hub-btn-light" href={appUrl}>Explore Moneze App <ArrowRight size={18} /></a></section>
     <section className="hub-section"><SectionHeading eyebrow="FAQ" title="Frequently Asked Questions About Mutual Funds" /><Faq items={mutualFaqs} /></section>
