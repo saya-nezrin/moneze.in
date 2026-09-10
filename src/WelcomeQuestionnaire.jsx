@@ -27,8 +27,8 @@ function WelcomeQuestionnaire({ onClose, onConsultation }) {
     if (!contactValid || otpStatus.state === "sending") return;
     setOtpStatus({ state: "sending", message: `Sending verification code to your ${channelLabel}…` });
     try {
-      const endpoint = customerType === "indian" ? "/api/auth/phone/send-otp" : "/api/auth/email/send-otp";
-      const body = customerType === "indian" ? { phone: details.phone } : { email: details.email.trim().toLowerCase() };
+      const endpoint = customerType === "indian" ? "/api/auth/phone" : "/api/auth/email/send-otp";
+      const body = customerType === "indian" ? { action: "send", phone: details.phone } : { email: details.email.trim().toLowerCase() };
       const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(payload.message || "The OTP could not be sent.");
@@ -44,9 +44,9 @@ function WelcomeQuestionnaire({ onClose, onConsultation }) {
     if (!otpRequestRef.current || !/^\d{6}$/.test(otp) || otpStatus.state === "verifying") return;
     setOtpStatus({ state: "verifying", message: "Verifying your code…" });
     try {
-      const endpoint = customerType === "indian" ? "/api/auth/phone/verify-otp" : "/api/auth/email/verify-otp";
+      const endpoint = customerType === "indian" ? "/api/auth/phone" : "/api/auth/email/verify-otp";
       const body = customerType === "indian"
-        ? { phone: details.phone, otp }
+        ? { action: "verify", phone: details.phone, otp }
         : { email: details.email.trim().toLowerCase(), otp, requestId: otpRequestRef.current };
       const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       const payload = await response.json().catch(() => ({}));
