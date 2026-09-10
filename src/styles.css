@@ -203,6 +203,10 @@ body.preview-open {
   margin-bottom: 0;
 }
 
+.calendly-heading .calendly-assessment-fallback {
+  margin-top: 14px;
+}
+
 .calendly-frame {
   background: #ffffff;
   border: 0;
@@ -455,7 +459,7 @@ body.preview-open {
   font-weight: 850;
   gap: 10px;
   justify-content: center;
-  margin-top: 14px;
+  margin-top: 0;
   min-height: 56px;
   padding: 0 22px;
   width: 100%;

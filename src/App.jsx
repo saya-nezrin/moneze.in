@@ -979,6 +979,11 @@ function App() {
             <div className="calendly-heading">
               <p className="eyebrow">Free consultation</p>
               <h2 id="booking-title">Choose your date and time</h2>
+              {!bookingConfirmed && (
+                <button className="calendly-assessment-fallback" type="button" onClick={openAssessmentAfterBooking}>
+                  Booking completed? Continue to Financial Assessment <ArrowRight size={18} />
+                </button>
+              )}
             </div>
             <iframe
               className="calendly-frame"
@@ -990,11 +995,6 @@ function App() {
                 <span>Booking confirmed ✅ Your financial assessment is next.</span>
                 <button type="button" onClick={openAssessmentAfterBooking}>Continue to Financial Assessment <ArrowRight size={18} /></button>
               </div>
-            )}
-            {!bookingConfirmed && (
-              <button className="calendly-assessment-fallback" type="button" onClick={openAssessmentAfterBooking}>
-                Booking completed? Continue to Financial Assessment <ArrowRight size={18} />
-              </button>
             )}
           </div>
         </div>
