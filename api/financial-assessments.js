@@ -1,4 +1,4 @@
-import { isValidEmail, readCookie, requirePost, sendJson, verifyVerificationSession } from "../lib/emailOtp.js";
+import { isValidEmail, isValidIndianPhone, normalizeEmail, normalizeIndianPhone, readCookie, requirePost, sendJson, verifyVerificationSession } from "../lib/emailOtp.js";
 import { getSupabaseConfiguration, supabaseHeaders } from "../lib/supabaseAdmin.js";
 
 const allowedStatuses = new Set(["complete"]);
@@ -20,17 +20,19 @@ export default async function handler(request, response) {
   } catch {
     session = null;
   }
-  if (!session || !isValidEmail(session.email)) {
-    return sendJson(response, 401, { message: "Please verify your email again before submitting." });
+  if (!session || (!isValidEmail(session.email || "") && !isValidIndianPhone(session.phone || ""))) {
+    return sendJson(response, 401, { message: "Please verify your contact details again before submitting." });
   }
 
   const body = cleanObject(request.body);
   const answers = cleanObject(body.answers);
   const goals = cleanObject(body.goals);
   const name = cleanText(answers.name || body.profile?.name, 120);
+  const email = session.email || normalizeEmail(answers.email);
+  const phone = session.phone || normalizeIndianPhone(answers.phone);
   const investmentRange = cleanText(body.profile?.investmentRange, 80);
   const assessmentStatus = cleanText(body.assessmentStatus, 30);
-  if (name.length < 2 || !body.consentAccepted || !allowedStatuses.has(assessmentStatus)) {
+  if (name.length < 2 || !isValidEmail(email) || !phone || !body.consentAccepted || !allowedStatuses.has(assessmentStatus)) {
     return sendJson(response, 400, { message: "Complete the required information and consent before submitting." });
   }
 
@@ -42,10 +44,10 @@ export default async function handler(request, response) {
 
   const record = {
     name,
-    email: session.email,
-    email_verified: true,
+    email,
+    email_verified: Boolean(session.email),
     investment_range: investmentRange || null,
-    assessment_data: { answers: { ...answers, email: session.email }, goals },
+    assessment_data: { answers: { ...answers, email, phone }, goals },
     consultation_scheduled: Boolean(body.consultationScheduled),
     calendly_event_uri: cleanText(body.calendlyEventUri, 500) || null,
     status: "new",

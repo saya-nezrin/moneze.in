@@ -118,6 +118,9 @@ body.preview-open {
 .welcome-kicker { color: #4caff9 !important; font-size: .82rem !important; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
 .welcome-step h1 { font-size: clamp(2rem, 3.2vw, 3.5rem); line-height: 1.08; margin: 12px 0 14px; max-width: 760px; }
 .welcome-step > p { color: #667085; font-size: clamp(1rem, 1.35vw, 1.22rem); line-height: 1.55; margin: 0 0 32px; }
+.welcome-customer-type { background: #f0f4f8; border-radius: 15px; display: grid; gap: 5px; grid-template-columns: 1fr 1fr; margin-bottom: 22px; padding: 5px; }
+.welcome-customer-type button { align-items: center; background: transparent; border: 1px solid transparent; border-radius: 12px; color: #667085; cursor: pointer; display: flex; font: inherit; font-size: 1rem; font-weight: 800; gap: 8px; justify-content: center; min-height: 52px; }
+.welcome-customer-type button.selected { background: #ffffff; border-color: #d8e1eb; box-shadow: 0 3px 10px rgba(20, 54, 92, .08); color: #071126; }
 .welcome-field { background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 15px; box-shadow: 0 10px 24px rgba(20, 54, 92, .08); display: grid; gap: 7px; margin-bottom: 16px; padding: 15px 18px; transition: border-color 160ms ease, box-shadow 160ms ease; }
 .welcome-field:focus-within { border-color: #1594f5; box-shadow: 0 0 0 3px rgba(21,148,245,.12); }
 .welcome-field > span { color: #5d687a; font-size: .86rem; font-weight: 750; }
