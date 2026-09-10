@@ -74,7 +74,7 @@ const stepRequired = (name) => ["name", "age", "phone", "email", "city", "monthl
 
 export default function FinancialAssessment({ initialDetails, consultationScheduled, onClose, onComplete }) {
   const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState({ name: initialDetails?.name || "", email: initialDetails?.email || "" });
+  const [answers, setAnswers] = useState({ name: initialDetails?.name || "", phone: initialDetails?.phone || "", email: initialDetails?.email || "" });
   const [goals, setGoals] = useState({});
   const [consentAccepted, setConsentAccepted] = useState(false);
   const [status, setStatus] = useState({ state: "idle", message: "" });
