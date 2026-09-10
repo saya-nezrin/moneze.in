@@ -9,7 +9,6 @@ import {
   Calculator,
   Check,
   Clock3,
-  FileCheck2,
   LineChart,
   Mail,
   Menu,
@@ -134,7 +133,6 @@ function App() {
   const [flippedEducationStep, setFlippedEducationStep] = useState(null);
   const heroPhonesRef = useRef(null);
   const featureCardsRef = useRef(null);
-  const journeyRef = useRef(null);
   const closeMenu = () => setMenuOpen(false);
   const openBooking = () => {
     setBookingConfirmed(false);
@@ -210,52 +208,6 @@ function App() {
 
     observer.observe(cards);
     return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    const journey = journeyRef.current;
-    const mobile = window.matchMedia("(max-width: 560px)");
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (!journey || reducedMotion.matches) return undefined;
-
-    const cards = Array.from(journey.children);
-    let current = 0;
-    let timer;
-    let resumeTimer;
-    let visible = false;
-    const stop = () => window.clearInterval(timer);
-    const start = () => {
-      stop();
-      if (!mobile.matches || !visible) return;
-      timer = window.setInterval(() => {
-        current = (current + 1) % cards.length;
-        journey.scrollTo({ left: cards[current].offsetLeft - 16, behavior: "smooth" });
-      }, 3000);
-    };
-    const pauseForInteraction = () => {
-      stop();
-      window.clearTimeout(resumeTimer);
-      resumeTimer = window.setTimeout(start, 6000);
-    };
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        visible = entry.isIntersecting;
-        visible ? start() : stop();
-      },
-      { threshold: 0.45 }
-    );
-
-    observer.observe(journey);
-    mobile.addEventListener("change", start);
-    journey.addEventListener("pointerdown", pauseForInteraction);
-
-    return () => {
-      stop();
-      window.clearTimeout(resumeTimer);
-      observer.disconnect();
-      mobile.removeEventListener("change", start);
-      journey.removeEventListener("pointerdown", pauseForInteraction);
-    };
   }, []);
 
   useEffect(() => {
@@ -565,29 +517,6 @@ function App() {
               ))}
             </div>
           </section>
-
-          <div className="journey-heading">
-            <p>OUR PROCESS</p>
-            <h2>A simple 6-step journey to your financial goals</h2>
-          </div>
-          <div ref={journeyRef} className="journey-grid">
-            {[
-              ["01", FileCheck2, "Understand", "Share your financial details, goals, income and expenses."],
-              ["02", PieChart, "Plan", "We create a personalised financial plan for you."],
-              ["03", UsersRound, "Discuss", "One-to-one consultation with your financial advisor."],
-              ["04", ShieldCheck, "Protect", "Build financial protection around your goals and investments."],
-              ["05", BarChart3, "Invest", "Invest with confidence in the right products for you."],
-              ["06", BadgeCheck, "Review", "We review your portfolio and goals regularly."]
-            ].map(([number, Icon, title, text], index) => (
-              <div className="journey-step" key={number}>
-                <span className="journey-number">{number}</span>
-                <span className="journey-icon"><Icon size={40} /></span>
-                <h3>{title}</h3>
-                <p>{text}</p>
-                {index < 5 && <span className="journey-arrow" aria-hidden="true">· · · →</span>}
-              </div>
-            ))}
-          </div>
 
           <section className="wealth-protection" aria-labelledby="wealth-protection-title">
             <div className="wealth-protection-heading">
@@ -927,36 +856,19 @@ function App() {
         </div>
       </section>
 
-      <section id="contact" className="contact-section">
-        <div>
-          <p className="eyebrow">Start Now</p>
-          <h2>Your Money Deserves a Plan.</h2>
-          <p>You don&apos;t need to have everything figured out before you start.</p>
-          <p>Tell us about your financial situation, and we&apos;ll help you understand your goals, create a personalized plan and explore suitable mutual fund investment options.</p>
-          <div className="contact-actions">
-            <button type="button" onClick={startConsultationFlow}>Get Free Financial Consultation <ArrowRight size={19} /></button>
-            <a href="https://www.moneze.in/">Explore Moneze App <ArrowRight size={19} /></a>
-          </div>
-          <small className="contact-reassurance"><ShieldCheck size={17} /> Start with understanding. Invest with confidence.</small>
-        </div>
-        <div className="contact-card">
-          <div className="contact-card-header">
-            <span>Contact Moneze</span>
-            <strong>We are ready to help</strong>
-          </div>
+      <section id="contact" className="contact-section contact-section-simple">
+        <div className="contact-simple-content">
+          <h2>Contact Moneze</h2>
+          <p>Have a question or need assistance? Get in touch with us.</p>
           <div className="contact-methods">
-            <a href="tel:+919972654330">
+            <a href="tel:+918848485543">
               <Phone size={19} />
-              <span><small>Call support</small><strong>+91 99726 54330</strong></span>
+              <span><small>Call us</small><strong>+91 8848485543</strong></span>
             </a>
             <a href="mailto:support@moneze.in">
               <Mail size={19} />
               <span><small>Email us</small><strong>support@moneze.in</strong></span>
             </a>
-          </div>
-          <div className="contact-note">
-            <span><WalletCards size={18} /> Mutual fund and portfolio platform</span>
-            <span><Clock3 size={18} /> Digital access available 24/7</span>
           </div>
         </div>
       </section>

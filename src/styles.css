@@ -1645,8 +1645,7 @@ span {
   height: 1px;
 }
 
-.choice-heading h2,
-.journey-heading h2 {
+.choice-heading h2 {
   color: #07163d;
   font-size: clamp(1.65rem, 2.8vw, 2.4rem);
   margin: 0;
@@ -1691,16 +1690,6 @@ span {
 .choice-cta-blue { background: linear-gradient(100deg, #087be5, #178af5); border: 0; color: #fff; cursor: pointer; font-family: inherit; width: 100%; }
 .choice-cta-green { border: 2px solid #32a86a; color: #078c4d; }
 .choice-or { align-items: center; background: #fff; border: 1px solid #e1e7ef; border-radius: 50%; color: #34435a; display: flex; font-size: .82rem; font-weight: 950; height: 54px; justify-content: center; left: 50%; position: absolute; top: 50%; transform: translate(-50%, -50%); width: 54px; z-index: 2; }
-
-.journey-heading { margin: 58px 0 32px; text-align: center; }
-.journey-heading > p { color: #087be5; font-size: .78rem; font-weight: 950; letter-spacing: .08em; margin: 0 0 8px; }
-.journey-grid { display: grid; grid-template-columns: repeat(6, 1fr); }
-.journey-step { padding: 0 18px; position: relative; text-align: center; }
-.journey-number { background: #eaf3ff; border-radius: 50%; color: #087be5; display: inline-grid; font-size: .72rem; font-weight: 950; height: 28px; place-items: center; position: relative; top: 8px; width: 28px; z-index: 2; }
-.journey-icon { align-items: center; background: #fff; border: 1px solid #e4eaf2; border-radius: 50%; box-shadow: 0 12px 30px rgba(18, 54, 95, .08); color: #087be5; display: flex; height: 100px; justify-content: center; margin: 0 auto 18px; width: 100px; }
-.journey-step h3 { color: #07163d; margin: 0 0 8px; }
-.journey-step p { color: #536176; font-size: .84rem; line-height: 1.5; margin: 0; }
-.journey-arrow { color: #b8c3d1; font-size: 1.2rem; letter-spacing: 3px; position: absolute; right: -28px; top: 72px; }
 
 .wealth-protection {
   background: linear-gradient(145deg, #f3f9ff, #ffffff);
@@ -1795,8 +1784,6 @@ span {
   }
   .education-flow { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .education-flow-step::after { display: none; }
-  .journey-grid { gap: 28px; grid-template-columns: 1fr 1fr; }
-  .journey-arrow { display: none; }
 }
 
 @media (max-width: 560px) {
@@ -1819,24 +1806,6 @@ span {
   .choice-card { min-height: 0; padding: 24px 20px; }
   .choice-card-heading { align-items: center; }
   .choice-icon { height: 56px; width: 56px; }
-  .journey-grid {
-    display: flex;
-    gap: 16px;
-    margin-inline: -16px;
-    overflow-x: auto;
-    overscroll-behavior-inline: contain;
-    padding: 8px 16px 22px;
-    scroll-padding-inline: 16px;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-  }
-  .journey-grid::-webkit-scrollbar { display: none; }
-  .journey-step {
-    flex: 0 0 min(78vw, 310px);
-    padding: 0 14px;
-    scroll-snap-align: start;
-  }
   .wealth-protection { border-radius: 18px; margin-top: 58px; padding: 28px 14px; }
   .wealth-protection-heading h2 { font-size: 1.75rem; }
   .wealth-protection-grid { gap: 9px; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 22px; }
@@ -2015,6 +1984,35 @@ span {
 .trust-section,
 .contact-section {
   padding: clamp(64px, 9vw, 112px) clamp(20px, 5vw, 76px);
+}
+
+.contact-section.contact-section-simple {
+  display: block;
+}
+
+.contact-simple-content {
+  margin: 0 auto;
+  max-width: 760px;
+  text-align: center;
+}
+
+.contact-simple-content > h2 {
+  margin: 0;
+}
+
+.contact-simple-content > p {
+  font-size: clamp(1rem, 1.4vw, 1.18rem);
+  line-height: 1.6;
+  margin: 16px auto 32px;
+}
+
+.contact-simple-content .contact-methods {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  text-align: left;
+}
+
+@media (max-width: 620px) {
+  .contact-simple-content .contact-methods { grid-template-columns: 1fr; }
 }
 
 .contact-actions {
