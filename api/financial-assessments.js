@@ -32,7 +32,7 @@ export default async function handler(request, response) {
   const phone = session.phone || normalizeIndianPhone(answers.phone);
   const investmentRange = cleanText(body.profile?.investmentRange, 80);
   const assessmentStatus = cleanText(body.assessmentStatus, 30);
-  if (name.length < 2 || !isValidEmail(email) || !phone || !body.consentAccepted || !allowedStatuses.has(assessmentStatus)) {
+  if (name.length < 2 || (!isValidEmail(email) && !isValidIndianPhone(phone)) || !body.consentAccepted || !allowedStatuses.has(assessmentStatus)) {
     return sendJson(response, 400, { message: "Complete the required information and consent before submitting." });
   }
 
@@ -44,7 +44,7 @@ export default async function handler(request, response) {
 
   const record = {
     name,
-    email,
+    email: isValidEmail(email) ? email : null,
     email_verified: Boolean(session.email),
     investment_range: investmentRange || null,
     assessment_data: { answers: { ...answers, email, phone }, goals },
