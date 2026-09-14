@@ -44,7 +44,10 @@ export default async function handler(request, response) {
 
   const record = {
     name,
-    email: isValidEmail(email) ? email : null,
+    // consultation_leads predates mobile verification and its email column is
+    // required. Use a stable, non-deliverable contact identifier for verified
+    // Indian mobile users; the actual phone remains in assessment_data.
+    email: isValidEmail(email) ? email : `${phone}@mobile.moneze.invalid`,
     email_verified: Boolean(session.email),
     investment_range: investmentRange || null,
     assessment_data: { answers: { ...answers, email, phone }, goals },
@@ -65,7 +68,13 @@ export default async function handler(request, response) {
       body: JSON.stringify(record),
     });
     if (!databaseResponse.ok) {
-      console.error("Supabase assessment insert failed", { status: databaseResponse.status });
+      const databaseError = await databaseResponse.json().catch(() => ({}));
+      console.error("Supabase assessment insert failed", {
+        status: databaseResponse.status,
+        code: cleanText(databaseError.code, 80),
+        message: cleanText(databaseError.message, 300),
+        details: cleanText(databaseError.details, 300),
+      });
       return sendJson(response, 502, { message: "Your assessment could not be saved. Please try again." });
     }
     const rows = await databaseResponse.json().catch(() => []);
