@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Check, MessageCircle, ShieldCheck, UserRound } from "lucide-react";
 
 function WelcomeQuestionnaire({ onClose, onConsultation }) {
@@ -6,14 +6,28 @@ function WelcomeQuestionnaire({ onClose, onConsultation }) {
   const [details, setDetails] = useState({ name: "", email: "", phone: "", investmentValue: "" });
   const [otp, setOtp] = useState("");
   const [otpStatus, setOtpStatus] = useState({ state: "idle", message: "" });
+  const [secondsRemaining, setSecondsRemaining] = useState(0);
   const otpRequestRef = useRef(null);
   const emailValid = /\S+@\S+\.\S+/.test(details.email);
   const phoneValid = /^[6-9]\d{9}$/.test(details.phone);
   const contactValid = customerType === "indian" ? phoneValid : emailValid;
   const channelLabel = customerType === "indian" ? "mobile" : "email";
 
+  useEffect(() => {
+    if (secondsRemaining <= 0) return undefined;
+    const timer = window.setInterval(() => {
+      setSecondsRemaining((current) => {
+        if (current > 1) return current - 1;
+        setOtpStatus((status) => status.state === "verified" ? status : { state: "expired", message: "This OTP has expired. Request a new code." });
+        return 0;
+      });
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [secondsRemaining > 0]);
+
   const resetVerification = () => {
     setOtp("");
+    setSecondsRemaining(0);
     setOtpStatus({ state: "idle", message: "" });
     otpRequestRef.current = null;
   };
@@ -34,14 +48,15 @@ function WelcomeQuestionnaire({ onClose, onConsultation }) {
       if (!response.ok) throw new Error(payload.message || "The OTP could not be sent.");
       otpRequestRef.current = payload.requestId || (customerType === "indian" ? details.phone : details.email.trim().toLowerCase());
       setOtp("");
-      setOtpStatus({ state: "sent", message: `A 6-digit verification code was sent to your ${channelLabel}.` });
+      setSecondsRemaining(payload.expiresIn || 180);
+      setOtpStatus({ state: "sent", message: `A 6-digit verification code was sent to your ${channelLabel}. It is valid for 3 minutes.` });
     } catch (error) {
       setOtpStatus({ state: "error", message: error?.message || "The OTP could not be sent. Please try again." });
     }
   };
 
   const verifyOtp = async () => {
-    if (!otpRequestRef.current || !/^\d{6}$/.test(otp) || otpStatus.state === "verifying") return;
+    if (!otpRequestRef.current || secondsRemaining <= 0 || !/^\d{6}$/.test(otp) || otpStatus.state === "verifying") return;
     setOtpStatus({ state: "verifying", message: "Verifying your code…" });
     try {
       const endpoint = customerType === "indian" ? "/api/auth/phone" : "/api/auth/email/verify-otp";
@@ -58,7 +73,8 @@ function WelcomeQuestionnaire({ onClose, onConsultation }) {
     }
   };
 
-  const otpActive = ["sent", "verifying", "error"].includes(otpStatus.state) && otpRequestRef.current;
+  const otpActive = ["sent", "verifying", "error", "expired"].includes(otpStatus.state) && otpRequestRef.current;
+  const timerText = `${String(Math.floor(secondsRemaining / 60)).padStart(2, "0")}:${String(secondsRemaining % 60).padStart(2, "0")}`;
 
   return (
     <div className="welcome-overlay" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
@@ -87,7 +103,7 @@ function WelcomeQuestionnaire({ onClose, onConsultation }) {
               <label className="welcome-field"><span>Email address</span><input autoFocus type="email" value={details.email} onChange={(event) => { setDetails((current) => ({ ...current, email: event.target.value })); resetVerification(); }} placeholder="you@example.com" autoComplete="email" /></label>
             )}
             {!otpActive && otpStatus.state !== "verified" && <button className="welcome-next" type="button" disabled={!contactValid || otpStatus.state === "sending"} onClick={sendOtp}>{otpStatus.state === "sending" ? "Sending OTP…" : `Send ${customerType === "indian" ? "Mobile" : "Email"} OTP`} <ArrowRight size={20} /></button>}
-            {otpActive && <><label className="welcome-field welcome-otp-field"><span>6-digit {channelLabel} OTP</span><input inputMode="numeric" maxLength={6} value={otp} onChange={(event) => setOtp(event.target.value.replace(/\D/g, ""))} placeholder="Enter verification code" autoComplete="one-time-code" /></label><button className="welcome-next" type="button" disabled={!/^\d{6}$/.test(otp) || otpStatus.state === "verifying"} onClick={verifyOtp}>{otpStatus.state === "verifying" ? "Verifying…" : `Verify ${customerType === "indian" ? "Mobile" : "Email"} OTP`} <Check size={20} /></button><button className="welcome-resend" type="button" onClick={sendOtp}>Resend OTP</button></>}
+            {otpActive && <><div className={`welcome-otp-timer ${secondsRemaining === 0 ? "expired" : ""}`} role="timer"><span>OTP expires in</span><strong>{timerText}</strong></div><label className="welcome-field welcome-otp-field"><span>6-digit {channelLabel} OTP</span><input inputMode="numeric" maxLength={6} value={otp} onChange={(event) => setOtp(event.target.value.replace(/\D/g, ""))} placeholder="Enter verification code" autoComplete="one-time-code" disabled={secondsRemaining === 0} /></label><button className="welcome-next" type="button" disabled={secondsRemaining === 0 || !/^\d{6}$/.test(otp) || otpStatus.state === "verifying"} onClick={verifyOtp}>{otpStatus.state === "verifying" ? "Verifying…" : `Verify ${customerType === "indian" ? "Mobile" : "Email"} OTP`} <Check size={20} /></button><button className="welcome-resend" type="button" disabled={secondsRemaining > 0 || otpStatus.state === "sending"} onClick={sendOtp}>{secondsRemaining > 0 ? `Resend available in ${timerText}` : "Resend OTP"}</button></>}
             {otpStatus.message && <p className={`welcome-otp-message ${otpStatus.state}`} role="status">{otpStatus.message}</p>}
           </div>
           <p className="welcome-protected"><ShieldCheck size={18} /> Your data is protected</p>

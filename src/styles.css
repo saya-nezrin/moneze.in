@@ -129,12 +129,17 @@ body.preview-open {
 .welcome-phone-input { align-items: center; display: flex; gap: 13px; }
 .welcome-phone-input b { border-right: 1px solid #cbd2dc; color: #071126; padding-right: 13px; }
 .welcome-otp-field { margin-top: 16px; }
+.welcome-otp-timer { align-items: center; background: #eef7ff; border: 1px solid #cfe7fb; border-radius: 12px; color: #536176; display: flex; font-size: .9rem; justify-content: space-between; margin-top: 16px; padding: 11px 14px; }
+.welcome-otp-timer strong { color: #087be5; font-variant-numeric: tabular-nums; letter-spacing: .04em; }
+.welcome-otp-timer.expired { background: #fff1f1; border-color: #ffd5d9; }
+.welcome-otp-timer.expired strong { color: #b4232f; }
 .welcome-otp-message { border-radius: 10px; font-size: .9rem !important; font-weight: 750; margin: 12px 0 0 !important; padding: 11px 14px; }
 .welcome-otp-message.sent,
 .welcome-otp-message.verifying { background: #eef7ff; color: #087be5; }
 .welcome-otp-message.verified { background: #e9fff6; color: #087b50; }
 .welcome-otp-message.error { background: #fff1f1; color: #b4232f; }
 .welcome-resend { background: transparent; border: 0; color: #087be5; cursor: pointer; display: block; font: inherit; font-size: .92rem; font-weight: 800; margin: 10px auto 0; padding: 8px; }
+.welcome-resend:disabled { color: #7b8799; cursor: not-allowed; }
 .welcome-options { display: grid; gap: 14px; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 24px; }
 .welcome-options button { align-items: center; background: #ffffff; border: 1.5px solid #d5dee9; border-radius: 16px; box-shadow: 0 10px 24px rgba(20, 54, 92, .08); color: #071126; cursor: pointer; display: flex; font: inherit; font-weight: 800; justify-content: space-between; min-height: 88px; padding: 18px 20px; text-align: left; }
 .welcome-options button.selected { background: #eef8ff; border-color: #1594f5; box-shadow: 0 0 0 3px rgba(21,148,245,.14), 0 10px 24px rgba(20,54,92,.08); color: #087be5; }

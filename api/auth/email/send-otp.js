@@ -48,7 +48,7 @@ export default async function handler(request, response) {
       return sendJson(response, 502, { message: "We could not send the verification email. Please try again." });
     }
 
-    return sendJson(response, 200, { requestId });
+    return sendJson(response, 200, { requestId, expiresIn: 180 });
   } catch (error) {
     console.error("Email OTP delivery failed", { message: error instanceof Error ? error.message : "Unknown error" });
     return sendJson(response, 502, { message: "We could not send the verification email. Please try again." });
