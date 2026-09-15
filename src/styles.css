@@ -5231,6 +5231,13 @@ span {
 .admin-tabs button { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #dce7f2; border-radius: 10px; color: #526278; cursor: pointer; font: inherit; padding: 12px 18px; }
 .admin-tabs button[aria-selected="true"] { color: #fff; background: #087be5; border-color: #087be5; }
 .admin-container [hidden] { display: none !important; }
+.admin-tabs { flex-wrap: wrap; }
+.admin-google-link { align-items: center; display: inline-flex; gap: 8px; padding: 12px 18px; margin-left: auto; color: #087be5; }
+.admin-ga-pages > p { color: #63748a; font-size: .9rem; line-height: 1.6; }
+.admin-ga-pages article span small { display: block; margin-top: 5px; overflow-wrap: anywhere; }
+.admin-activity-controls { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0; }
+.admin-activity-controls input, .admin-activity-controls select { border: 1px solid #dce7f2; border-radius: 9px; padding: 10px 12px; font: inherit; max-width: 100%; }
+.admin-activity-list { max-height: 520px; overflow-y: auto; }
 
 @media (max-width: 760px) {
   .admin-header > div > span { display: none; }
