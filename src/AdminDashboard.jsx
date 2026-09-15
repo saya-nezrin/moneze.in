@@ -40,6 +40,7 @@ export default function AdminDashboard() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [analytics, setAnalytics] = useState({ state: "loading", data: null, message: "" });
+  const [deletingIds, setDeletingIds] = useState([]);
 
   const loadLeads = async () => {
     setLoading(true);
@@ -162,6 +163,20 @@ export default function AdminDashboard() {
     }
   };
 
+  const deleteLead = async (lead) => {
+    if (!window.confirm(`Delete ${lead.name}’s record and financial assessment? This cannot be undone. This does not cancel their Calendly booking.`)) return;
+    setDeletingIds((current) => [...current, lead.id]);
+    try {
+      const response = await fetch("/api/admin/leads", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: lead.id }) });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.message || "The record could not be deleted.");
+      setLeads((current) => current.filter((item) => item.id !== lead.id));
+      setSelectedLead((current) => current?.id === lead.id ? null : current);
+      setMessage("Record deleted.");
+    } catch (error) { setMessage(error.message); }
+    finally { setDeletingIds((current) => current.filter((id) => id !== lead.id)); }
+  };
+
   const exportCsv = () => {
     const answerKeys = [...new Set(filteredLeads.flatMap((lead) => Object.keys(lead.assessment_data?.answers || {})))];
     const header = ["Name", "Email", "Mobile number", "Investment range", "Status", "Consultation scheduled", "Consultation date/time", "Created", ...answerKeys.map((key) => assessmentLabels[key] || formatFieldName(key)), "Goals", "Consent date"];
@@ -199,7 +214,7 @@ export default function AdminDashboard() {
       <div className="admin-stats"><article><Users size={24} /><div><strong>{leads.length}</strong><span>Total leads</span></div></article>{leadStatuses.slice(0, 3).map((status) => <article key={status}><div><strong>{leads.filter((lead) => lead.status === status).length}</strong><span>{status}</span></div></article>)}</div>
       <div className="admin-toolbar"><label><Search size={18} /><input aria-label="Search leads" placeholder="Search name, email, mobile or investment range" value={query} onChange={(event) => setQuery(event.target.value)} /></label><select aria-label="Filter by status" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}><option value="all">All statuses</option>{leadStatuses.map((status) => <option key={status}>{status}</option>)}</select></div>
       {message && <p className="admin-error" role="alert">{message}</p>}
-<div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Customer</th><th>Mobile number</th><th>Investment range</th><th>Consultation</th><th>Submitted</th><th>Status</th><th>Details</th></tr></thead><tbody>{filteredLeads.map((lead) => <tr key={lead.id}><td><strong>{lead.name}</strong><span>{lead.email}</span></td><td>{getLeadPhone(lead) ? <a className="admin-phone-link" href={`tel:+91${getLeadPhone(lead)}`}>+91 {getLeadPhone(lead)}</a> : "—"}</td><td>{lead.investment_range || "—"}</td><td>{lead.consultation?.startTime ? <><strong>{formatDate(lead.consultation.startTime)}</strong><span>{lead.consultation.status === "canceled" ? "Cancelled" : "Online consultation"}</span></> : lead.calendly_event_uri || lead.consultation_scheduled ? "Booked · time sync pending" : "Not confirmed"}</td><td>{formatDate(lead.created_at)}</td><td><select value={lead.status} onChange={(event) => updateStatus(lead, event.target.value)}>{leadStatuses.map((status) => <option key={status}>{status}</option>)}</select></td><td><button className="admin-view" type="button" onClick={() => setSelectedLead(lead)}><Eye size={17} />View</button></td></tr>)}</tbody></table>{!loading && !filteredLeads.length && <div className="admin-empty">No matching consultation leads.</div>}</div>
+<div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Customer</th><th>Mobile number</th><th>Investment range</th><th>Consultation</th><th>Submitted</th><th>Status</th><th>Details</th><th>Delete</th></tr></thead><tbody>{filteredLeads.map((lead) => <tr key={lead.id}><td><strong>{lead.name}</strong><span>{lead.email}</span></td><td>{getLeadPhone(lead) ? <a className="admin-phone-link" href={`tel:+91${getLeadPhone(lead)}`}>+91 {getLeadPhone(lead)}</a> : "—"}</td><td>{lead.investment_range || "—"}</td><td>{lead.consultation?.startTime ? <><strong>{formatDate(lead.consultation.startTime)}</strong><span>{lead.consultation.status === "canceled" ? "Cancelled" : "Online consultation"}</span></> : lead.calendly_event_uri || lead.consultation_scheduled ? "Booked · time sync pending" : "Not confirmed"}</td><td>{formatDate(lead.created_at)}</td><td><select value={lead.status} onChange={(event) => updateStatus(lead, event.target.value)}>{leadStatuses.map((status) => <option key={status}>{status}</option>)}</select></td><td><button className="admin-view" type="button" onClick={() => setSelectedLead(lead)}><Eye size={17} />View</button></td><td><button className="admin-delete" type="button" disabled={deletingIds.includes(lead.id)} onClick={() => deleteLead(lead)} aria-label={`Delete ${lead.name} record`}>{deletingIds.includes(lead.id) ? "Deleting…" : "Delete"}</button></td></tr>)}</tbody></table>{!loading && !filteredLeads.length && <div className="admin-empty">No matching consultation leads.</div>}</div>
     </section>
 {selectedLead && <div className="admin-detail-overlay" onClick={() => setSelectedLead(null)}><aside className="admin-detail" onClick={(event) => event.stopPropagation()}><button className="admin-detail-close" onClick={() => setSelectedLead(null)} aria-label="Close details">×</button><p>VERIFIED LEAD</p><h2>{selectedLead.name}</h2><div className="admin-detail-contacts">{getLeadEmail(selectedLead) && <a href={`mailto:${getLeadEmail(selectedLead)}`}>{getLeadEmail(selectedLead)}</a>}{getLeadPhone(selectedLead) && <a href={`tel:+91${getLeadPhone(selectedLead)}`}>+91 {getLeadPhone(selectedLead)}</a>}</div><div className="admin-detail-meta"><span>Investment range<strong>{selectedLead.investment_range || "—"}</strong></span><span>Submitted<strong>{formatDate(selectedLead.created_at)}</strong></span></div><h3>Financial assessment</h3><div className="admin-answer-list">{Object.entries(selectedLead.assessment_data?.answers || {}).map(([key, value]) => <div key={key}><span>{assessmentLabels[key] || formatFieldName(key)}</span><strong>{formatAnswer(key, value)}</strong></div>)}</div><h3>Goals</h3><div className="admin-answer-list">{Object.entries(selectedLead.assessment_data?.goals || {}).map(([key, value]) => <div key={key}><span>{formatFieldName(key)}</span><strong>{displayValue(value)}</strong></div>)}{!Object.keys(selectedLead.assessment_data?.goals || {}).length && <span>No goals selected.</span>}</div></aside></div>}
   </main>;

@@ -54,6 +54,19 @@ export default async function handler(request, response) {
     return sendJson(response, 200, { lead: rows[0] || { id, status } });
   }
 
-  response.setHeader("Allow", "GET, PATCH");
+  if (request.method === "DELETE") {
+    const id = typeof request.body?.id === "string" ? request.body.id : "";
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) return sendJson(response, 400, { message: "Invalid lead identifier." });
+    const databaseResponse = await fetch(`${url}/rest/v1/consultation_leads?id=eq.${encodeURIComponent(id)}`, {
+      method: "DELETE",
+      headers: supabaseHeaders(secretKey, { Prefer: "return=representation" }),
+    });
+    if (!databaseResponse.ok) return sendJson(response, 502, { message: "The record could not be deleted. Please try again." });
+    const rows = await databaseResponse.json().catch(() => []);
+    if (!rows.length) return sendJson(response, 404, { message: "This record no longer exists." });
+    return sendJson(response, 200, { deleted: true, id });
+  }
+
+  response.setHeader("Allow", "GET, PATCH, DELETE");
   return sendJson(response, 405, { message: "Method not allowed." });
 }
