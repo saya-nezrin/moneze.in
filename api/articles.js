@@ -9,6 +9,22 @@ export default async function handler(request, response) {
 
   const { url, secretKey } = getSupabaseConfiguration();
   if (!url || !secretKey) return sendJson(response, 503, { message: "Articles are temporarily unavailable." });
+  const isKeepAlive = request.query?.keepAlive === "1";
+  if (isKeepAlive) {
+    const cronSecret = process.env.CRON_SECRET;
+    if (cronSecret && request.headers.authorization !== `Bearer ${cronSecret}`) {
+      return sendJson(response, 401, { message: "Unauthorized." });
+    }
+    try {
+      const databaseResponse = await fetch(`${url}/rest/v1/articles?select=id&limit=1`, {
+        headers: supabaseHeaders(secretKey),
+      });
+      if (!databaseResponse.ok) return sendJson(response, 502, { message: "Supabase health check failed." });
+      return sendJson(response, 200, { ok: true });
+    } catch {
+      return sendJson(response, 502, { message: "Supabase health check failed." });
+    }
+  }
   const slug = typeof request.query?.slug === "string" ? request.query.slug.trim().slice(0, 180) : "";
   const params = new URLSearchParams({
     select: "slug,title,excerpt,category,content,published_at,featured,meta_title,meta_description,focus_keyword",
