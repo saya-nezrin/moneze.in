@@ -1,6 +1,7 @@
 import { requireAdmin } from "../../lib/adminAuth.js";
 import { sendJson } from "../../lib/emailOtp.js";
 import { getSupabaseConfiguration, supabaseHeaders } from "../../lib/supabaseAdmin.js";
+import { getAnalyticsOverview } from "../../lib/googleAnalytics.js";
 
 const statuses = new Set(["new", "contacted", "scheduled", "completed", "closed"]);
 
@@ -8,6 +9,16 @@ export default async function handler(request, response) {
   let admin;
   try { admin = await requireAdmin(request); } catch { admin = null; }
   if (!admin) return sendJson(response, 401, { message: "Admin authentication required." });
+
+  if (request.method === "GET" && request.query?.view === "analytics") {
+    try {
+      response.setHeader("Cache-Control", "private, max-age=300");
+      return sendJson(response, 200, { analytics: await getAnalyticsOverview(request) });
+    } catch (error) {
+      console.error("Google Analytics report failed", { message: error?.message });
+      return sendJson(response, 503, { message: error?.message || "Google Analytics reports are temporarily unavailable." });
+    }
+  }
 
   const { url, secretKey } = getSupabaseConfiguration();
   if (!url || !secretKey) return sendJson(response, 503, { message: "Lead storage is temporarily unavailable." });

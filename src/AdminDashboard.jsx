@@ -35,6 +35,7 @@ export default function AdminDashboard() {
   const [selectedLead, setSelectedLead] = useState(null);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [analytics, setAnalytics] = useState({ state: "loading", data: null, message: "" });
 
   const loadLeads = async () => {
     setLoading(true);
@@ -51,6 +52,18 @@ export default function AdminDashboard() {
     }
   };
 
+  const loadAnalytics = async () => {
+    setAnalytics((current) => ({ ...current, state: "loading", message: "" }));
+    try {
+      const response = await fetch("/api/admin/leads?view=analytics");
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.message || "Analytics could not be loaded.");
+      setAnalytics({ state: "ready", data: payload.analytics, message: "" });
+    } catch (error) {
+      setAnalytics({ state: "error", data: null, message: error.message });
+    }
+  };
+
   useEffect(() => {
     fetch("/api/admin/session").then(async (response) => {
       const payload = await response.json().catch(() => ({}));
@@ -62,7 +75,7 @@ export default function AdminDashboard() {
     }).catch(() => setSession({ state: "anonymous", email: "" }));
   }, []);
 
-  useEffect(() => { if (session.state === "authenticated") loadLeads(); }, [session.state]);
+  useEffect(() => { if (session.state === "authenticated") { loadLeads(); loadAnalytics(); } }, [session.state]);
 
   const filteredLeads = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -169,12 +182,15 @@ export default function AdminDashboard() {
   return <main className="admin-page">
     <header className="admin-header"><a href="#home"><img src="/moneze-logo.png" alt="Moneze" /></a><div><span>{session.email}</span><button type="button" onClick={logout}><LogOut size={17} /> Logout</button></div></header>
     <section className="admin-container">
-      <div className="admin-title"><div><p>ADMIN CONSOLE</p><h1>Consultation leads</h1><span>Review verified customer submissions and assessment details.</span></div><div className="admin-title-actions"><button type="button" onClick={loadLeads} disabled={loading}><RefreshCw className={loading ? "admin-spin" : ""} size={18} /> Refresh</button><button type="button" onClick={exportCsv} disabled={!filteredLeads.length}><Download size={18} />Export CSV</button></div></div>
+      <div className="admin-title"><div><p>ADMIN CONSOLE</p><h1>Consultation leads</h1><span>Review verified customer submissions and assessment details.</span></div><div className="admin-title-actions"><button type="button" onClick={() => { loadLeads(); loadAnalytics(); }} disabled={loading}><RefreshCw className={loading ? "admin-spin" : ""} size={18} /> Refresh</button><button type="button" onClick={exportCsv} disabled={!filteredLeads.length}><Download size={18} />Export CSV</button></div></div>
       <section className="admin-analytics-card" aria-labelledby="admin-analytics-title">
         <div className="admin-analytics-icon"><BarChart3 size={26} /></div>
-        <div><p>GOOGLE ANALYTICS</p><h2 id="admin-analytics-title">Website analytics connected</h2><span>Tracking ID G-14JD7VSGB3 is collecting public website page views. Google may take up to 48 hours to show the first reports.</span></div>
+        <div><p>GOOGLE ANALYTICS · LAST 30 DAYS</p><h2 id="admin-analytics-title">Website performance</h2><span>Live reporting from the Moneze GA4 property.</span></div>
         <a href="https://analytics.google.com/analytics/web/#/a408078035p554231468/reports/intelligenthome" target="_blank" rel="noreferrer">Open Analytics <ExternalLink size={17} /></a>
       </section>
+      {analytics.state === "loading" && <div className="admin-analytics-loading"><RefreshCw className="admin-spin" size={18} /> Loading Google Analytics…</div>}
+      {analytics.state === "error" && <div className="admin-analytics-error"><strong>Analytics reports unavailable.</strong><span>{analytics.message}</span></div>}
+      {analytics.data && <><div className="admin-ga-stats">{[["Active users", analytics.data.summary.activeUsers], ["New users", analytics.data.summary.newUsers], ["Sessions", analytics.data.summary.sessions], ["Page views", analytics.data.summary.pageViews], ["Events", analytics.data.summary.events]].map(([label, value]) => <article key={label}><span>{label}</span><strong>{Number(value).toLocaleString("en-IN")}</strong></article>)}</div><section className="admin-ga-pages"><div><p>TOP CONTENT</p><h2>Most viewed pages</h2></div>{analytics.data.pages.length ? <div>{analytics.data.pages.map((page) => <article key={page.path}><span title={page.path}>{page.path}</span><strong>{page.views.toLocaleString("en-IN")} views</strong><small>{page.users.toLocaleString("en-IN")} users</small></article>)}</div> : <p className="admin-ga-empty">Google Analytics is collecting data. Page reports will appear here once processing is complete.</p>}</section></>}
       <div className="admin-stats"><article><Users size={24} /><div><strong>{leads.length}</strong><span>Total leads</span></div></article>{leadStatuses.slice(0, 3).map((status) => <article key={status}><div><strong>{leads.filter((lead) => lead.status === status).length}</strong><span>{status}</span></div></article>)}</div>
       <div className="admin-toolbar"><label><Search size={18} /><input aria-label="Search leads" placeholder="Search name, email, mobile or investment range" value={query} onChange={(event) => setQuery(event.target.value)} /></label><select aria-label="Filter by status" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}><option value="all">All statuses</option>{leadStatuses.map((status) => <option key={status}>{status}</option>)}</select></div>
       {message && <p className="admin-error" role="alert">{message}</p>}
