@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import FinancialAssessment from "./FinancialAssessment";
+import CalendlyBooking from "./CalendlyBooking";
 import WelcomeQuestionnaire from "./WelcomeQuestionnaire";
 import {
   ArrowRight,
@@ -901,11 +902,7 @@ function App() {
                 </button>
               )}
             </div>
-            <iframe
-              className="calendly-frame"
-              title="Book a Moneze financial consultation"
-              src="https://calendly.com/moneze-support/30min?hide_gdpr_banner=1&background_color=ffffff&text_color=07163d&primary_color=087be5"
-            />
+            <CalendlyBooking />
             {bookingConfirmed && (
               <div className="calendly-booked-message" role="status">
                 <span>Booking confirmed ✅ Your financial assessment is next.</span>
