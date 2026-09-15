@@ -42,7 +42,7 @@ function SelectableCards({ options, selected, onToggle, name }) {
 
 const formatCurrency = (value) => Number(value || 0).toLocaleString("en-IN", { maximumFractionDigits: 0 });
 
-export default function FinancialAssessment({ initialDetails, consultationScheduled, onClose, onComplete }) {
+export default function FinancialAssessment({ initialDetails, consultationScheduled, calendlyEventUri, onClose, onComplete }) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState({
     name: initialDetails?.name || "",
@@ -110,6 +110,7 @@ export default function FinancialAssessment({ initialDetails, consultationSchedu
           goals: Object.fromEntries(Object.entries(goals).filter(([, value]) => value)),
           assessmentStatus: "complete",
           consultationScheduled: Boolean(consultationScheduled),
+          calendlyEventUri,
           consentAccepted,
         }),
       });

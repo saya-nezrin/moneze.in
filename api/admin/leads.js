@@ -2,6 +2,7 @@ import { requireAdmin } from "../../lib/adminAuth.js";
 import { sendJson } from "../../lib/emailOtp.js";
 import { getSupabaseConfiguration, supabaseHeaders } from "../../lib/supabaseAdmin.js";
 import { getAnalyticsOverview } from "../../lib/googleAnalytics.js";
+import { getConsultation } from "../../lib/calendly.js";
 
 const statuses = new Set(["new", "contacted", "scheduled", "completed", "closed"]);
 
@@ -28,7 +29,15 @@ export default async function handler(request, response) {
       headers: supabaseHeaders(secretKey),
     });
     if (!databaseResponse.ok) return sendJson(response, 502, { message: "Leads could not be loaded." });
-    return sendJson(response, 200, { leads: await databaseResponse.json() });
+    const leads = await databaseResponse.json();
+    const bookings = new Map();
+    await Promise.all(leads.map(async (lead) => {
+      const uri = lead.calendly_event_uri;
+      if (!uri) return;
+      if (!bookings.has(uri)) bookings.set(uri, getConsultation(uri));
+      lead.consultation = await bookings.get(uri);
+    }));
+    return sendJson(response, 200, { leads });
   }
 
   if (request.method === "PATCH") {

@@ -128,6 +128,7 @@ function App() {
   const [previewImage, setPreviewImage] = useState(null);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [bookingConfirmed, setBookingConfirmed] = useState(false);
+  const [calendlyEventUri, setCalendlyEventUri] = useState("");
   const [assessmentOpen, setAssessmentOpen] = useState(false);
   const [consultationDetails, setConsultationDetails] = useState(null);
   const [flippedEducationStep, setFlippedEducationStep] = useState(null);
@@ -245,6 +246,7 @@ function App() {
       if (calendlyMessage && messageData?.event === "calendly.event_scheduled") {
         window.gtag?.("event", "consultation_scheduled", { provider: "calendly" });
         setBookingConfirmed(true);
+        setCalendlyEventUri(messageData.payload?.event?.uri || "");
         window.setTimeout(openAssessmentAfterBooking, 1000);
       }
     };
@@ -914,7 +916,7 @@ function App() {
         </div>
       )}
 
-      {assessmentOpen && <FinancialAssessment initialDetails={consultationDetails} consultationScheduled={bookingConfirmed} onClose={() => setAssessmentOpen(false)} onComplete={completeAssessment} />}
+      {assessmentOpen && <FinancialAssessment initialDetails={consultationDetails} consultationScheduled={bookingConfirmed} calendlyEventUri={calendlyEventUri} onClose={() => setAssessmentOpen(false)} onComplete={completeAssessment} />}
 
       {previewImage && (
         <div className="phone-preview-modal" role="dialog" aria-modal="true" aria-label={`${previewImage.title} screen preview`} onClick={() => setPreviewImage(null)}>
