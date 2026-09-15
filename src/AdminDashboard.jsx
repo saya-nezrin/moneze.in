@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, Download, Eye, LogOut, RefreshCw, Search, ShieldCheck, Users } from "lucide-react";
+import { ArrowLeft, BarChart3, Download, ExternalLink, Eye, LogOut, RefreshCw, Search, ShieldCheck, Users } from "lucide-react";
 
 const leadStatuses = ["new", "contacted", "scheduled", "completed", "closed"];
 const formatDate = (value) => value ? new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value)) : "—";
@@ -170,6 +170,11 @@ export default function AdminDashboard() {
     <header className="admin-header"><a href="#home"><img src="/moneze-logo.png" alt="Moneze" /></a><div><span>{session.email}</span><button type="button" onClick={logout}><LogOut size={17} /> Logout</button></div></header>
     <section className="admin-container">
       <div className="admin-title"><div><p>ADMIN CONSOLE</p><h1>Consultation leads</h1><span>Review verified customer submissions and assessment details.</span></div><div className="admin-title-actions"><button type="button" onClick={loadLeads} disabled={loading}><RefreshCw className={loading ? "admin-spin" : ""} size={18} /> Refresh</button><button type="button" onClick={exportCsv} disabled={!filteredLeads.length}><Download size={18} />Export CSV</button></div></div>
+      <section className="admin-analytics-card" aria-labelledby="admin-analytics-title">
+        <div className="admin-analytics-icon"><BarChart3 size={26} /></div>
+        <div><p>GOOGLE ANALYTICS</p><h2 id="admin-analytics-title">Website analytics connected</h2><span>Tracking ID G-14JD7VSGB3 is collecting public website page views. Google may take up to 48 hours to show the first reports.</span></div>
+        <a href="https://analytics.google.com/" target="_blank" rel="noreferrer">Open Analytics <ExternalLink size={17} /></a>
+      </section>
       <div className="admin-stats"><article><Users size={24} /><div><strong>{leads.length}</strong><span>Total leads</span></div></article>{leadStatuses.slice(0, 3).map((status) => <article key={status}><div><strong>{leads.filter((lead) => lead.status === status).length}</strong><span>{status}</span></div></article>)}</div>
       <div className="admin-toolbar"><label><Search size={18} /><input aria-label="Search leads" placeholder="Search name, email, mobile or investment range" value={query} onChange={(event) => setQuery(event.target.value)} /></label><select aria-label="Filter by status" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}><option value="all">All statuses</option>{leadStatuses.map((status) => <option key={status}>{status}</option>)}</select></div>
       {message && <p className="admin-error" role="alert">{message}</p>}
