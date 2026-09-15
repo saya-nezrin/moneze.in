@@ -173,7 +173,7 @@ export default function AdminDashboard() {
       <section className="admin-analytics-card" aria-labelledby="admin-analytics-title">
         <div className="admin-analytics-icon"><BarChart3 size={26} /></div>
         <div><p>GOOGLE ANALYTICS</p><h2 id="admin-analytics-title">Website analytics connected</h2><span>Tracking ID G-14JD7VSGB3 is collecting public website page views. Google may take up to 48 hours to show the first reports.</span></div>
-        <a href="https://analytics.google.com/" target="_blank" rel="noreferrer">Open Analytics <ExternalLink size={17} /></a>
+        <a href="https://analytics.google.com/analytics/web/#/a408078035p554231468/reports/intelligenthome" target="_blank" rel="noreferrer">Open Analytics <ExternalLink size={17} /></a>
       </section>
       <div className="admin-stats"><article><Users size={24} /><div><strong>{leads.length}</strong><span>Total leads</span></div></article>{leadStatuses.slice(0, 3).map((status) => <article key={status}><div><strong>{leads.filter((lead) => lead.status === status).length}</strong><span>{status}</span></div></article>)}</div>
       <div className="admin-toolbar"><label><Search size={18} /><input aria-label="Search leads" placeholder="Search name, email, mobile or investment range" value={query} onChange={(event) => setQuery(event.target.value)} /></label><select aria-label="Filter by status" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}><option value="all">All statuses</option>{leadStatuses.map((status) => <option key={status}>{status}</option>)}</select></div>

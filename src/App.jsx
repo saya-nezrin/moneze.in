@@ -141,6 +141,7 @@ function App() {
     window.history.pushState(null, "", "#consultation-booking");
   };
   const startConsultationFlow = () => {
+    window.gtag?.("event", "begin_consultation", { source: "website" });
     setBookingOpen(false);
     setAssessmentOpen(false);
     setWelcomeOpen(true);
@@ -242,6 +243,7 @@ function App() {
         calendlyMessage = false;
       }
       if (calendlyMessage && messageData?.event === "calendly.event_scheduled") {
+        window.gtag?.("event", "consultation_scheduled", { provider: "calendly" });
         setBookingConfirmed(true);
         window.setTimeout(openAssessmentAfterBooking, 1000);
       }

@@ -115,6 +115,7 @@ export default function FinancialAssessment({ initialDetails, consultationSchedu
       });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(payload.message || "The assessment could not be submitted.");
+      window.gtag?.("event", "generate_lead", { lead_source: "financial_assessment" });
       setStatus({ state: "success", message: "" });
     } catch (error) {
       setStatus({ state: "error", message: error.message || "Submission failed. Please try again." });

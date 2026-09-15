@@ -46,6 +46,7 @@ function WelcomeQuestionnaire({ onClose, onConsultation }) {
       const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(payload.message || "The OTP could not be sent.");
+      window.gtag?.("event", "otp_sent", { method: customerType === "indian" ? "sms" : "email" });
       otpRequestRef.current = payload.requestId || (customerType === "indian" ? details.phone : details.email.trim().toLowerCase());
       setOtp("");
       setSecondsRemaining(payload.expiresIn || 180);
@@ -66,6 +67,7 @@ function WelcomeQuestionnaire({ onClose, onConsultation }) {
       const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok || payload.verified === false) throw new Error(payload.message || "The verification code is incorrect.");
+      window.gtag?.("event", "contact_verified", { method: customerType === "indian" ? "sms" : "email" });
       setOtpStatus({ state: "verified", message: `${customerType === "indian" ? "Mobile number" : "Email address"} verified successfully.` });
       onConsultation({ ...details, customerType, email: customerType === "nri" ? details.email.trim().toLowerCase() : "", phone: customerType === "indian" ? details.phone : "" });
     } catch (error) {
