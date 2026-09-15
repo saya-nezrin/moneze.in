@@ -28,7 +28,28 @@ const instrumentHistory = () => {
   trackPageView();
 };
 
+const instrumentEngagement = () => {
+  if (window.location.hash === "#admin") return;
+  const sent = new Set();
+  const send = (name, params = {}) => window.gtag?.("event", name, params);
+  const labelFor = (element) => (element?.getAttribute("aria-label") || element?.textContent || element?.getAttribute("href") || "").trim().replace(/\s+/g, " ").slice(0, 100);
+  document.addEventListener("click", (event) => {
+    const target = event.target.closest("a,button,[role='button']");
+    if (!target) return;
+    send("ui_click", { element_type: target.tagName.toLowerCase(), element_label: labelFor(target), link_url: target.tagName === "A" ? target.href : undefined });
+  }, { passive: true });
+  window.addEventListener("scroll", () => {
+    const height = document.documentElement.scrollHeight - window.innerHeight;
+    if (height <= 0) return;
+    const depth = Math.min(100, Math.round((window.scrollY / height) * 100));
+    [25, 50, 75, 90, 100].forEach((threshold) => {
+      if (depth >= threshold && !sent.has(threshold)) { sent.add(threshold); send("scroll_depth", { percent_scrolled: threshold }); }
+    });
+  }, { passive: true });
+};
+
 instrumentHistory();
+instrumentEngagement();
 
 function Root() {
   const isAdminRoute = () => window.location.hash === "#admin" || new URLSearchParams(window.location.search).has("admin-recovery") || new URLSearchParams(window.location.hash.slice(1)).get("type") === "recovery";
