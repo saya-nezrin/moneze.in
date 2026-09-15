@@ -16,7 +16,7 @@ export default async function handler(request, response) {
       return sendJson(response, 401, { message: "Unauthorized." });
     }
     try {
-      const databaseResponse = await fetch(`${url}/rest/v1/articles?select=id&limit=1`, {
+      const databaseResponse = await fetch(`${url}/rest/v1/consultation_leads?select=id&limit=1`, {
         headers: supabaseHeaders(secretKey),
       });
       if (!databaseResponse.ok) return sendJson(response, 502, { message: "Supabase health check failed." });
@@ -37,6 +37,10 @@ export default async function handler(request, response) {
   try {
     const databaseResponse = await fetch(`${url}/rest/v1/articles?${params}`, { headers: supabaseHeaders(secretKey) });
     if (!databaseResponse.ok) {
+      if (databaseResponse.status === 404) {
+        response.setHeader("Cache-Control", "public, s-maxage=300, stale-while-revalidate=900");
+        return response.status(200).json({ articles: [] });
+      }
       console.error("Supabase article query failed", { status: databaseResponse.status });
       return sendJson(response, 502, { message: "Articles could not be loaded." });
     }

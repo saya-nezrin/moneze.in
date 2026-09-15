@@ -29,7 +29,7 @@ function calculate({ mode, monthlyAmount, duration, returnRate, stepUp, currentA
       }
       value += lumpsumAmount * ((1 + returnRate / 100) ** (sampleMonths / 12));
     } else if (mode === "Lumpsum") {
-      value = monthlyAmount * 12 * ((1 + returnRate / 100) ** elapsedYears);
+      value = monthlyAmount * ((1 + returnRate / 100) ** elapsedYears);
     } else {
       const startingCorpus = monthlyAmount * 120;
       const withdrawn = monthlyAmount * elapsedMonths * 0.42;
@@ -44,7 +44,7 @@ function calculate({ mode, monthlyAmount, duration, returnRate, stepUp, currentA
     ? Array.from({ length: months }, (_, index) => monthlyAmount * ((1 + stepUp / 100) ** Math.floor(index / 12))).reduce((sum, value) => sum + value, 0)
     : mode === "SIP & SWP"
       ? Array.from({ length: Math.max((sipEndAge - currentAge) * 12, 12) }, (_, index) => monthlyAmount * ((1 + stepUp / 100) ** Math.floor(index / 12))).reduce((sum, value) => sum + value, lumpsumAmount)
-      : monthlyAmount * 12;
+      : mode === "Lumpsum" ? monthlyAmount : monthlyAmount * 12;
   const wealthGained = Math.max(projectedCorpus - totalInvested, 0);
   const maxPoint = Math.max(...points, totalInvested, 1);
   const chartPoints = points.map((value, index) => {
