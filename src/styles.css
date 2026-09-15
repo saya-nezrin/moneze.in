@@ -996,12 +996,38 @@ body.preview-open {
 
 @media (max-width: 620px) {
   .assessment-modal {
-    padding: 10px;
+    align-items: stretch;
+    overflow-x: hidden;
+    padding: 0;
   }
 
   .assessment-dialog {
     border-radius: 18px;
-    padding: 24px 18px;
+    box-shadow: none;
+    min-height: 100%;
+    padding: 24px 16px 28px;
+  }
+
+  .assessment-flow .assessment-dialog { max-width: none; }
+  .assessment-header h2,
+  .assessment-flow .assessment-header h2 {
+    font-size: clamp(1.55rem, 8vw, 2rem);
+    line-height: 1.15;
+    margin-right: 42px;
+    overflow-wrap: anywhere;
+  }
+  .assessment-form { margin-top: 22px; }
+  .assessment-stack { gap: 18px; }
+  .assessment-conditional,
+  .assessment-protection-card,
+  .assessment-goal-detail { border-radius: 14px; padding: 16px; }
+  .assessment-choice-row label,
+  .assessment-horizon-row label,
+  .assessment-quick-row button {
+    flex: 1 1 auto;
+    justify-content: center;
+    min-width: 0;
+    padding: 0 13px;
   }
 
   .assessment-fields,
@@ -1016,6 +1042,7 @@ body.preview-open {
 
   .assessment-actions button {
     flex: 1;
+    min-width: 0;
     padding: 0 10px;
   }
 }
@@ -1624,7 +1651,7 @@ span {
   display: block;
 }
 
-@media (min-width: 681px) {
+@media (min-width: 1181px) {
   .hero h1 {
     font-size: clamp(3rem, 4vw, 5rem);
     max-width: none;
@@ -3604,6 +3631,10 @@ span {
     margin-right: auto;
   }
 
+  .hero h1 span {
+    white-space: normal;
+  }
+
   .hero-actions {
     align-items: center;
     justify-content: center;
@@ -3663,7 +3694,8 @@ span {
   }
 
   .hero h1 {
-    font-size: clamp(2.75rem, 8vw, 4.6rem);
+    font-size: clamp(2.35rem, 8vw, 4.2rem);
+    overflow-wrap: anywhere;
   }
 
   .hero-dual-ui {
