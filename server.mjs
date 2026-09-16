@@ -86,6 +86,14 @@ async function handleApi(request, response, url) {
   }
   response.setHeader("Content-Type", "application/json; charset=utf-8");
   response.setHeader("Cache-Control", "no-store");
+  response.status = (statusCode) => {
+    response.statusCode = statusCode;
+    return response;
+  };
+  response.json = (body) => {
+    if (!response.writableEnded) response.end(JSON.stringify(body));
+    return response;
+  };
   request.query = Object.fromEntries(url.searchParams.entries());
   try {
     request.body = ["POST", "PUT", "PATCH", "DELETE"].includes(request.method) ? await readBody(request) : {};
