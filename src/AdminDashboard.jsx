@@ -62,7 +62,7 @@ export default function AdminDashboard() {
   const loadAnalytics = async () => {
     setAnalytics((current) => ({ ...current, state: "loading", message: "" }));
     try {
-      const response = await fetch("/api/admin/leads?view=analytics");
+      const response = await fetch("/api/admin/analytics");
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(payload.message || "Analytics could not be loaded.");
       setAnalytics({ state: "ready", data: payload.analytics, message: "" });

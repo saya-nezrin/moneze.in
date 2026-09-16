@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import adminLeads from "./api/admin/leads.js";
+import adminAnalytics from "./api/admin/analytics.js";
 import adminLogin from "./api/admin/login.js";
 import adminLogout from "./api/admin/logout.js";
 import adminRecover from "./api/admin/recover.js";
@@ -22,6 +23,7 @@ const port = Number(process.env.PORT || 3000);
 const maxBodyBytes = 1024 * 1024;
 
 const handlers = new Map([
+  ["/api/admin/analytics", adminAnalytics],
   ["/api/admin/leads", adminLeads],
   ["/api/admin/login", adminLogin],
   ["/api/admin/logout", adminLogout],
