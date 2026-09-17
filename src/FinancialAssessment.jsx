@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, ArrowRight, CalendarPlus, Check, X } from "lucide-react";
 
 const stepTitles = [
@@ -55,6 +55,13 @@ export default function FinancialAssessment({ initialDetails, consultationSchedu
   const [consentAccepted, setConsentAccepted] = useState(false);
   const [status, setStatus] = useState({ state: "idle", message: "" });
 
+  useEffect(() => {
+    window.gtag?.("event", "assessment_step_view", {
+      assessment_step: step + 1,
+      assessment_step_name: stepTitles[step],
+    });
+  }, [step]);
+
   const updateAnswer = (name, value) => setAnswers((previous) => ({ ...previous, [name]: value }));
   const surplus = useMemo(() => Number(answers.monthlyIncome || 0) + Number(answers.otherIncome || 0) - Number(answers.householdExpenses || 0) - Number(answers.emiLoans || 0), [answers.monthlyIncome, answers.otherIncome, answers.householdExpenses, answers.emiLoans]);
 
@@ -91,6 +98,10 @@ export default function FinancialAssessment({ initialDetails, consultationSchedu
       return;
     }
     setStatus({ state: "idle", message: "" });
+    window.gtag?.("event", "assessment_step_complete", {
+      assessment_step: step + 1,
+      assessment_step_name: stepTitles[step],
+    });
     setStep((value) => Math.min(value + 1, stepTitles.length - 1));
   };
 
@@ -116,6 +127,7 @@ export default function FinancialAssessment({ initialDetails, consultationSchedu
       });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(payload.message || "The assessment could not be submitted.");
+      window.gtag?.("event", "assessment_step_complete", { assessment_step: 7, assessment_step_name: stepTitles[6] });
       window.gtag?.("event", "generate_lead", { lead_source: "financial_assessment" });
       setStatus({ state: "success", message: "" });
     } catch (error) {

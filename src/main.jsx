@@ -30,6 +30,9 @@ const instrumentHistory = () => {
 
 const instrumentEngagement = () => {
   const sent = new Set();
+  let maxScrollDepth = 0;
+  let pageEnteredAt = Date.now();
+  let exitSent = false;
   const send = (name, params = {}) => {
     if (window.location.hash === "#admin" || new URLSearchParams(window.location.search).has("admin-recovery")) return;
     window.gtag?.("event", name, params);
@@ -43,16 +46,31 @@ const instrumentEngagement = () => {
     send(name, { element_type: target.tagName.toLowerCase(), element_label: label });
   }, { passive: true });
   document.addEventListener("submit", () => send("form_submit"), { passive: true });
-  window.addEventListener("hashchange", () => sent.clear());
-  window.addEventListener("popstate", () => sent.clear());
+  window.addEventListener("hashchange", () => { maxScrollDepth = 0; pageEnteredAt = Date.now(); exitSent = false; });
+  window.addEventListener("popstate", () => { sent.clear(); maxScrollDepth = 0; pageEnteredAt = Date.now(); exitSent = false; });
   window.addEventListener("scroll", () => {
     const height = document.documentElement.scrollHeight - window.innerHeight;
     if (height <= 0) return;
     const depth = Math.min(100, Math.round((window.scrollY / height) * 100));
+    maxScrollDepth = Math.max(maxScrollDepth, depth);
     [25, 50, 75, 90, 100].forEach((threshold) => {
       if (depth >= threshold && !sent.has(threshold)) { sent.add(threshold); send(`scroll_depth_${threshold}`, { percent_scrolled: threshold }); }
     });
   }, { passive: true });
+  const recordExit = () => {
+    if (exitSent) return;
+    exitSent = true;
+    send("page_exit", {
+      engagement_time_msec: Math.max(1, Date.now() - pageEnteredAt),
+      max_scroll_depth: maxScrollDepth,
+      transport_type: "beacon",
+    });
+  };
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") recordExit();
+    else { pageEnteredAt = Date.now(); exitSent = false; }
+  });
+  window.addEventListener("pagehide", recordExit);
 };
 
 instrumentHistory();
